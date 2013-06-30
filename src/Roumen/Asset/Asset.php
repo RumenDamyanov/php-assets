@@ -10,14 +10,14 @@
 
 class Asset {
 
-    public $css = array();
+    public static $css = array();
 
-    public $js_header = array();
-    public $js_footer = array();
+    public static $js_header = array();
+    public static $js_footer = array();
 
-    public $script_header = array();
-    public $script_footer = array();
-    public $script_ready = array();
+    public static $script_header = array();
+    public static $script_footer = array();
+    public static $script_ready = array();
 
 
 /**
@@ -28,21 +28,21 @@ class Asset {
  *
  * @return void
  */
-    function add($a, $position = 'footer')
+    public static function add($a, $position = 'footer')
     {
         if (preg_match("/\.css/i", $a))
         {
             // css
-            $this->css[] = $a;
+            self::$css[] = $a;
         }
 
         elseif (preg_match("/\.js/i", $a))
         {
             // js
             if ($position == 'header')
-                $this->js_header[] = $a;
+                self::$js_header[] = $a;
             else
-                $this->js_footer[] = $a;
+                self::$js_footer[] = $a;
         }
     }
 
@@ -55,25 +55,25 @@ class Asset {
  *
  * @return void
  */
-    function add_script($s, $position = 'footer')
+    public static function add_script($s, $position = 'footer')
     {
         if ($position == 'footer')
-            $this->scr_footer[] = $s;
+            self::$scr_footer[] = $s;
         elseif ($position == 'header')
-            $this->scr_header[] = $s;
+            self::$scr_header[] = $s;
         else
-            $this->scr_ready[] = $s;
+            self::$scr_ready[] = $s;
     }
 
 
 /**
  * Loads all items from $css array
  */
-    function css()
+    public static function css()
     {
-        if (!empty($this->css))
+        if (!empty(self::$css))
         {
-            foreach($this->css as $file)
+            foreach(self::$css as $file)
             {
                 echo '<link rel="stylesheet" type="text/css" href="' . $file . '" />' . "\n";
             }
@@ -86,21 +86,21 @@ class Asset {
  *
  * @param string $p (options: 'footer', 'header')
  */
-    function js($p = 'footer')
+    public static function js($p = 'footer')
     {
         if ($p == 'header')
         {
-            if (!empty($this->js_header))
+            if (!empty(self::$js_header))
             {
-                foreach($this->js_header as $file)
+                foreach(self::$js_header as $file)
                 {
                     echo '<script type="text/javascript" src="' . $file . '"></script>' . "\n";
                 }
             }
         } else {
-            if (!empty($this->js_footer))
+            if (!empty(self::$js_footer))
             {
-                foreach($this->js_footer as $file)
+                foreach(self::$js_footer as $file)
                 {
                     echo '<script type="text/javascript" src="' . $file . '"></script>' . "\n";
                 }
@@ -114,31 +114,31 @@ class Asset {
  *
  * @param string $p (options: 'footer', 'header' or 'ready')
  */
-    function scripts($p = 'footer')
+    public static function scripts($p = 'footer')
     {
         if ($p == 'footer')
         {
-            if (!empty($this->script_footer))
+            if (!empty(self::$script_footer))
             {
-                foreach($this->script_footer as $script)
+                foreach(self::$script_footer as $script)
                 {
                     echo '<script type="text/javascript">' . $script . "</script>\n";
                 }
             }
         } elseif ($p == 'header')
         {
-            if (!empty($this->scr_header))
+            if (!empty(self::$scr_header))
             {
-                foreach($this->scr_header as $script)
+                foreach(self::$scr_header as $script)
                 {
                     echo '<script type="text/javascript">' . $script . "</script>\n";
                 }
             }
         } else {
-            if (!empty($this->scr_ready))
+            if (!empty(self::$scr_ready))
             {
                 $p = '<script type="text/javascript">$(document).ready(function(){';
-                foreach($this->scr_ready as $script)
+                foreach(self::$scr_ready as $script)
                 {
                     $p .= $script;
                 }

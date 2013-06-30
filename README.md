@@ -40,7 +40,7 @@ Asset::add('js/some.js', 'footer');
 
 // adds script to 'ready' array (scripts are loaded in $(document).ready() function)
 $script1 = '$("#hello").html("Hello World!")';
-Asset::add_script($script1, 'ready');
+Asset::addScript($script1, 'ready');
 
 // loads css assets (place this in your master layout before close head tag)
 Asset::css();

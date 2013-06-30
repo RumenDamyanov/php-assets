@@ -82,7 +82,7 @@ class Asset {
  *
  * @return void
  */
-    public static function add_script($s, $position = 'footer')
+    public static function addScript($s, $position = 'footer')
     {
         if ($position == 'footer')
             self::$scr_footer[] = $s;

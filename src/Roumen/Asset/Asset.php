@@ -3,7 +3,7 @@
  * Asset class for laravel4-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 1.0.1
+ * @version 1.1
  * @link http://roumen.me/projects/laravel4-asset
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */

@@ -46,6 +46,33 @@ class Asset {
         }
     }
 
+/**
+ * Add new asset as first in its array
+ *
+ * @param string $a
+ * @param string $position
+ *
+ * @return void
+ */
+    public static function addFirst($a, $position = 'footer')
+    {
+        if (preg_match("/\.css/i", $a))
+        {
+            // css
+            array_unshift(self::$css, $a);
+        }
+
+        elseif (preg_match("/\.js/i", $a))
+        {
+            // js
+            if ($position == 'header')
+                array_unshift(self::$js_header, $a);
+            else
+                array_unshift(self::$js_footer, $a);
+        }
+    }
+
+
 
 /**
  * Add new script

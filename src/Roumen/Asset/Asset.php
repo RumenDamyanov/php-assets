@@ -1,33 +1,34 @@
 <?php namespace Roumen\Asset;
+
 /**
  * Asset class for laravel4-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 1.1
+ * @version 1.2
  * @link http://roumen.me/projects/laravel4-asset
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
+class Asset
+{
 
-class Asset {
-
-    public static $css = array();
-
-    public static $js_header = array();
-    public static $js_footer = array();
-
-    public static $script_header = array();
-    public static $script_footer = array();
-    public static $script_ready = array();
+    // assets arrays
+    protected static $css = array();
+    protected static $styles = array();
+    protected static $js_header = array();
+    protected static $js_footer = array();
+    protected static $script_header = array();
+    protected static $script_footer = array();
+    protected static $script_ready = array();
 
 
-/**
- * Add new asset
- *
- * @param string $a
- * @param string $position
- *
- * @return void
- */
+    /**
+     * Add new asset
+     *
+     * @param string $a
+     * @param string $position
+     *
+     * @return void
+     */
     public static function add($a, $position = 'footer')
     {
         if (preg_match("/\.css/i", $a))
@@ -46,14 +47,15 @@ class Asset {
         }
     }
 
-/**
- * Add new asset as first in its array
- *
- * @param string $a
- * @param string $position
- *
- * @return void
- */
+
+    /**
+     * Add new asset as first in its array
+     *
+     * @param string $a
+     * @param string $position
+     *
+     * @return void
+     */
     public static function addFirst($a, $position = 'footer')
     {
         if (preg_match("/\.css/i", $a))
@@ -73,29 +75,41 @@ class Asset {
     }
 
 
-
-/**
- * Add new script
- *
- * @param string $s
- * @param string $position
- *
- * @return void
- */
+    /**
+     * Add new script
+     *
+     * @param string $s
+     * @param string $position
+     *
+     * @return void
+     */
     public static function addScript($s, $position = 'footer')
     {
         if ($position == 'footer')
-            self::$scr_footer[] = $s;
+            self::$script_footer[] = $s;
         elseif ($position == 'header')
-            self::$scr_header[] = $s;
+            self::$script_header[] = $s;
         else
-            self::$scr_ready[] = $s;
+            self::$script_ready[] = $s;
     }
 
 
-/**
- * Loads all items from $css array
- */
+    /**
+     * Add new style
+     *
+     * @param string $s
+     *
+     * @return void
+     */
+    public static function addStyle($s)
+    {
+        self::$style[] = $s;
+    }
+
+
+    /**
+     * Loads all items from $css array
+     */
     public static function css()
     {
         if (!empty(self::$css))
@@ -108,11 +122,31 @@ class Asset {
     }
 
 
-/**
- * Loads all items from $js_header or $js_footer arrays
- *
- * @param string $p (options: 'footer', 'header')
- */
+    /**
+     * Loads all items from $styles array
+     *
+     * @param string $s
+     */
+    public static function styles($s)
+    {
+        if (!empty(self::$styles))
+        {
+            $p = '<style type="text/css">';
+            foreach(self::$styles as $style)
+            {
+                $p .= $style . "\n";
+            }
+            $p .= "</style>\n";
+            echo $p;
+        }
+    }
+
+
+    /**
+     * Loads all items from $js_header or $js_footer arrays
+     *
+     * @param string $p (options: 'footer', 'header')
+     */
     public static function js($p = 'footer')
     {
         if ($p == 'header')
@@ -136,11 +170,11 @@ class Asset {
     }
 
 
-/**
- * Loads all items from $scripts_header, $scripts_footer or $scripts_ready arrays
- *
- * @param string $p (options: 'footer', 'header' or 'ready')
- */
+    /**
+     * Loads all items from $scripts_header, $scripts_footer or $scripts_ready arrays
+     *
+     * @param string $p (options: 'footer', 'header' or 'ready')
+     */
     public static function scripts($p = 'footer')
     {
         if ($p == 'footer')
@@ -154,25 +188,26 @@ class Asset {
             }
         } elseif ($p == 'header')
         {
-            if (!empty(self::$scr_header))
+            if (!empty(self::$script_header))
             {
-                foreach(self::$scr_header as $script)
+                foreach(self::$script_header as $script)
                 {
                     echo '<script type="text/javascript">' . $script . "</script>\n";
                 }
             }
         } else {
-            if (!empty(self::$scr_ready))
+            if (!empty(self::$script_ready))
             {
                 $p = '<script type="text/javascript">$(document).ready(function(){';
-                foreach(self::$scr_ready as $script)
+                foreach(self::$script_ready as $script)
                 {
-                    $p .= $script;
+                    $p .= $script . "\n";
                 }
                 $p .= "});</script>\n";
                 echo $p;
             }
         }
     }
+
 
 }

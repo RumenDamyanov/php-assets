@@ -1,4 +1,4 @@
-# [laravel4-asset](http://roumen.me/projects/laravel4-asset)
+# [laravel4-asset](http://roumen.me/projects/laravel4-asset) package
 
 [![Latest Stable Version](https://poser.pugx.org/roumen/asset/version.png)](https://packagist.org/packages/roumen/asset) [![Total Downloads](https://poser.pugx.org/roumen/asset/d/total.png)](https://packagist.org/packages/roumen/asset)
 
@@ -56,4 +56,34 @@ Asset::scripts('ready');
 
 // in case that you need to load asset as first element in its own array
 Asset::addFirst('js/toBeLoadedFirst.js');
+```
+
+## Example layout structure
+
+```php
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Title</title>
+		<!-- css files -->
+		{{ Asset::css() }}
+		<!-- css styles -->
+		{{ Asset::styles() }}
+		<!-- js files (header) -->
+		{{ Asset::js('header') }}
+		<!-- js scripts (header) -->
+		{{ Asset::scripts('header') }}
+	</head>
+	<body>
+		<!-- content of nested view -->
+		{{ $content }}
+
+		<!-- js files -->
+		{{ Asset::js() }}
+		<!-- js scripts -->
+		{{ Asset::scripts('footer') }}
+		<!-- jquery scripts -->
+		{{ Asset::scripts('ready') }}
+	</body>
+</html>
 ```

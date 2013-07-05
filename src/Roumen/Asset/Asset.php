@@ -4,7 +4,7 @@
  * Asset class for laravel4-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 1.2
+ * @version 1.3
  * @link http://roumen.me/projects/laravel4-asset
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -155,7 +155,7 @@ class Asset
             {
                 foreach(self::$js_header as $file)
                 {
-                    echo '<script type="text/javascript" src="' . $file . '"></script>' . "\n";
+                    echo '<script src="' . $file . '"></script>' . "\n";
                 }
             }
         } else {
@@ -163,7 +163,7 @@ class Asset
             {
                 foreach(self::$js_footer as $file)
                 {
-                    echo '<script type="text/javascript" src="' . $file . '"></script>' . "\n";
+                    echo '<script src="' . $file . '"></script>' . "\n";
                 }
             }
         }
@@ -183,7 +183,7 @@ class Asset
             {
                 foreach(self::$script_footer as $script)
                 {
-                    echo '<script type="text/javascript">' . $script . "</script>\n";
+                    echo '<script>' . $script . "</script>\n";
                 }
             }
         } elseif ($p == 'header')
@@ -192,13 +192,13 @@ class Asset
             {
                 foreach(self::$script_header as $script)
                 {
-                    echo '<script type="text/javascript">' . $script . "</script>\n";
+                    echo '<script>' . $script . "</script>\n";
                 }
             }
         } else {
             if (!empty(self::$script_ready))
             {
-                $p = '<script type="text/javascript">$(document).ready(function(){';
+                $p = '<script>$(document).ready(function(){';
                 foreach(self::$script_ready as $script)
                 {
                     $p .= $script . "\n";

@@ -56,6 +56,11 @@ Asset::scripts('ready');
 
 // in case that you need to load asset as first element in its own array
 Asset::addFirst('js/toBeLoadedFirst.js');
+
+// set a domain name for your local assets in production environment
+// must end with slash ('/') and point to your files (domain alias, cdn etc.)
+// must be placed before Asset::css() or Asset::js() statements
+Asset::setDomain('http://static.mydomain.ltd/');
 ```
 
 ## Example layout structure

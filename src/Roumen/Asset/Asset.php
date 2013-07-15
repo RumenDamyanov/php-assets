@@ -4,7 +4,7 @@
  * Asset class for laravel4-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 1.3
+ * @version 1.4
  * @link http://roumen.me/projects/laravel4-asset
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -19,6 +19,33 @@ class Asset
     protected static $script_header = array();
     protected static $script_footer = array();
     protected static $script_ready = array();
+    protected static $assets_domain = '/'; // e.g. http://cdn.domain.tld/
+
+
+    /**
+     * Check environment
+     *
+     * @return void
+     */
+    public static function checkEnv()
+    {
+        $env = \App::environment();
+
+        if ($env == 'local' || $env == 'testing')
+        {
+            self::$assets_domain = '/';
+        }
+    }
+
+    /**
+     * Set domain
+     *
+     * @return void
+     */
+    public static function setDomain($url)
+    {
+        self::$assets_domain = $url;
+    }
 
 
     /**
@@ -112,11 +139,20 @@ class Asset
      */
     public static function css()
     {
+        self::checkEnv();
+
         if (!empty(self::$css))
         {
             foreach(self::$css as $file)
             {
-                echo '<link rel="stylesheet" type="text/css" href="' . $file . '" />' . "\n";
+                if (stripos($file, "http://") === 0)
+                {
+                    $url = $file;
+                } else
+                    {
+                        $url = self::$assets_domain . $file;
+                    }
+                echo '<link rel="stylesheet" type="text/css" href="' . $url . '" />' . "\n";
             }
         }
     }
@@ -149,13 +185,22 @@ class Asset
      */
     public static function js($p = 'footer')
     {
+        self::checkEnv();
+
         if ($p == 'header')
         {
             if (!empty(self::$js_header))
             {
                 foreach(self::$js_header as $file)
                 {
-                    echo '<script src="' . $file . '"></script>' . "\n";
+                    if (stripos($file, "http://") === 0)
+                    {
+                        $url = $file;
+                    } else
+                        {
+                           $url = self::$assets_domain . $file;
+                        }
+                    echo '<script src="' . $url . '"></script>' . "\n";
                 }
             }
         } else {
@@ -163,7 +208,14 @@ class Asset
             {
                 foreach(self::$js_footer as $file)
                 {
-                    echo '<script src="' . $file . '"></script>' . "\n";
+                    if (stripos($file, "http://") === 0)
+                    {
+                        $url = $file;
+                    } else
+                        {
+                           $url = self::$assets_domain . $file;
+                        }
+                    echo '<script src="' . $url . '"></script>' . "\n";
                 }
             }
         }

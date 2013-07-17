@@ -92,3 +92,17 @@ Asset::setDomain('http://static.mydomain.ltd/');
 	</body>
 </html>
 ```
+## Changelog
+
+v1.5 - You can now use your own asset groups
+
+```php
+// add assets to 'foobar' group
+{{ Asset:add('foo.js','foobar') }}
+{{ Asset:add('bar.js','foobar') }}
+{{ Asset:addScript($script,'foobar') }}
+
+// load assets from 'foobar' group
+{{ Asset:js('foobar') }}
+{{ Asset:scripts('foobar') }}
+```

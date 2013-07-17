@@ -87,7 +87,13 @@ class Asset
         elseif (preg_match("/\.js/i", $a))
         {
             // js
-            array_unshift(self::$js[$name], $a);
+            if (!empty(self::$js[$name]))
+            {
+                array_unshift(self::$js[$name], $a);
+            } else
+                {
+                    self::$js[$name][] = $a;
+                }
         }
     }
 

@@ -158,7 +158,7 @@ class Asset
      *
      * @return void
     */
-    public static function styles($s)
+    public static function styles()
     {
         if (!empty(self::$styles))
         {

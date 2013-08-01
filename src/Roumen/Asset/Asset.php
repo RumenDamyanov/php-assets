@@ -121,7 +121,7 @@ class Asset
     */
     public static function addStyle($s)
     {
-        self::$style[] = $s;
+        self::$styles[] = $s;
     }
 
 

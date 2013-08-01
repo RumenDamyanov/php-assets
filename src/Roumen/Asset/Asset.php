@@ -119,9 +119,9 @@ class Asset
      *
      * @return void
     */
-    public static function addStyle($s)
+    public static function addStyle($style, $s = 'header')
     {
-        self::$styles[] = $s;
+        self::$styles[$s] = $style;
     }
 
 
@@ -138,7 +138,7 @@ class Asset
         {
             foreach(self::$css as $file)
             {
-                if (stripos($file, "http://") === 0)
+                if (preg_match('/(https?:)?\/\//i', $file))
                 {
                     $url = $file;
                 } else
@@ -154,22 +154,32 @@ class Asset
     /**
      * Loads all items from $styles array
      *
-     * @param string $s
+     * @param string $name
      *
      * @return void
     */
-    public static function styles()
+    public static function styles($name = 'header')
     {
-        if (!empty(self::$styles))
+        if (($name !== '') && (!empty(self::$styles)))
         {
-            $p = '<style type="text/css">';
+            $p = "\n<style type=\"text/css\">\n";
             foreach(self::$styles as $style)
             {
                 $p .= $style . "\n";
             }
             $p .= "</style>\n";
-            echo $p;
+            echo $p;            
         }
+        else if (!empty(self::$styles[$name]))
+        {
+            $p = "<style type=\"text/css\">\n";
+            foreach(self::$styles[$name] as $style)
+            {
+                $p .= $style . "\n";
+            }
+            $p .= "</style>\n";
+            echo $p;
+        }    
     }
 
 
@@ -188,7 +198,7 @@ class Asset
         {
             foreach(self::$js[$name] as $file)
             {
-                if (stripos($file, "http://") === 0)
+                if (preg_match('/(https?:)?\/\//i', $file))
                 {
                     $url = $file;
                 } else

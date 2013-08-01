@@ -27,7 +27,7 @@ class Asset
     {
         $env = \App::environment();
 
-        if ($env == 'local' || $env == 'testing')
+        if (($env == 'local' || $env == 'testing') && (self::$domain === '/'))
         {
             self::$domain = '/';
         }

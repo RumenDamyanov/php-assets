@@ -16,7 +16,7 @@ class Asset
     protected static $js = array();
     protected static $scripts = array();
     protected static $domain = '/';
-
+	protected static $prefix = '';
 
     /**
      * Check environment
@@ -43,6 +43,15 @@ class Asset
         self::$domain = $url;
     }
 
+    /**
+     * Set prefix
+     *
+     * @return void
+    */
+    public static function setPrefix($prefix)
+    {
+        self::$prefix = $prefix;
+    }
 
     /**
      * Add new asset
@@ -145,7 +154,7 @@ class Asset
                     {
                         $url = self::$domain . $file;
                     }
-                echo '<link rel="stylesheet" type="text/css" href="' . $url . '" />' . "\n";
+                echo self::$prefix . '<link rel="stylesheet" type="text/css" href="' . $url . '" />' . "\n";
             }
         }
     }
@@ -162,17 +171,17 @@ class Asset
     {
         if (($name !== '') && (!empty(self::$styles)))
         {
-            $p = "\n<style type=\"text/css\">\n";
+            $p = "\n" . self::$prefix . "<style type=\"text/css\">\n" . self::$prefix;
             foreach(self::$styles as $style)
             {
-                $p .= $style . "\n";
+                $p .= $style . "\n" . self::$prefix;
             }
-            $p .= "</style>\n";
+            $p .= self::$prefix . "</style>\n";
             echo $p;            
         }
         else if (!empty(self::$styles[$name]))
         {
-            $p = "<style type=\"text/css\">\n";
+            $p = self::$prefix . "<style type=\"text/css\">\n";
             foreach(self::$styles[$name] as $style)
             {
                 $p .= $style . "\n";
@@ -205,7 +214,7 @@ class Asset
                     {
                        $url = self::$domain . $file;
                     }
-                echo '<script src="' . $url . '"></script>' . "\n";
+                echo self::$prefix . '<script src="' . $url . '"></script>' . "\n";
             }
         }
 
@@ -225,10 +234,10 @@ class Asset
         {
             if (!empty(self::$scripts['ready']))
             {
-                $p = '<script>$(document).ready(function(){';
+                $p = self::$prefix . '<script>$(document).ready(function(){';
                 foreach(self::$scripts['ready'] as $script)
                 {
-                    $p .= $script . "\n";
+                    $p .= $script . "\n" . self::$prefix;
                 }
                 $p .= "});</script>\n";
                 echo $p;
@@ -239,7 +248,7 @@ class Asset
                 {
                     foreach(self::$scripts[$name] as $script)
                     {
-                        echo '<script>' . $script . "</script>\n";
+                        echo self::$prefix . '<script>' . $script . "</script>\n";
                     }
                 }
             }

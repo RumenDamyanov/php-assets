@@ -94,6 +94,10 @@ Asset::setDomain('http://static.mydomain.ltd/');
 ```
 ## Changelog
 
+v2.0 - Added setPrefix() method
+
+v1.9 - Bug fixes, improvements to styles(), js() and css()
+
 v1.5 - You can now use your own asset groups
 
 ```php

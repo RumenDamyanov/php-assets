@@ -130,7 +130,7 @@ class Asset
     */
     public static function addStyle($style, $s = 'header')
     {
-        self::$styles[$s] = $style;
+        self::$styles[$s][] = $style;
     }
 
 
@@ -169,26 +169,26 @@ class Asset
     */
     public static function styles($name = 'header')
     {
-        if (($name !== '') && (!empty(self::$styles)))
+        if (($name !== '') && (!empty(self::$styles[$name])))
         {
             $p = "\n" . self::$prefix . "<style type=\"text/css\">\n" . self::$prefix;
-            foreach(self::$styles as $style)
+            foreach(self::$styles[$name] as $style)
             {
                 $p .= $style . "\n" . self::$prefix;
             }
             $p .= self::$prefix . "</style>\n";
-            echo $p;            
+            echo $p;
         }
-        else if (!empty(self::$styles[$name]))
+        else if (!empty(self::$styles))
         {
             $p = self::$prefix . "<style type=\"text/css\">\n";
-            foreach(self::$styles[$name] as $style)
+            foreach(self::$styles as $style)
             {
                 $p .= $style . "\n";
             }
             $p .= "</style>\n";
             echo $p;
-        }    
+        }
     }
 
 

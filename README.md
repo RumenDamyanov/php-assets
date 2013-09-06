@@ -1,4 +1,4 @@
-# [laravel4-assets](http://roumen.me/projects/laravel4-assets) package
+# [laravel4-assets](http://roumen.it/projects/laravel4-assets) package
 
 [![Latest Stable Version](https://poser.pugx.org/roumen/asset/version.png)](https://packagist.org/packages/roumen/asset) [![Total Downloads](https://poser.pugx.org/roumen/asset/d/total.png)](https://packagist.org/packages/roumen/asset)
 

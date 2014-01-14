@@ -1,11 +1,11 @@
 <?php namespace Roumen\Asset;
 
 /**
- * Asset class for laravel4-assets package.
+ * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
  * @version 2.3.1
- * @link http://roumen.it/projects/laravel4-assets
+ * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class Asset

@@ -61,6 +61,11 @@ Asset::addFirst('js/toBeLoadedFirst.js');
 // must end with slash ('/') and point to your files (domain alias, cdn etc.)
 // must be placed before Asset::css() or Asset::js() statements
 Asset::setDomain('http://static.mydomain.ltd/');
+
+// set a cache buster file that contains asset hashes
+// it should be a JSON file should be structured as follows: {"filename.js":"hash","filename.css":"hash",...}
+// if provided, your assets URLs will be appended with "?hash" string (e.g., http://example.com/filename.css?529e54acf891ccc6592f115afa1cc077) 
+Asset::setCachebuster(public_path() . '/build/assets.json');
 ```
 
 ## Example layout structure

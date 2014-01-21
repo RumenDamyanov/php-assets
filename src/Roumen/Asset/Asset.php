@@ -16,7 +16,8 @@ class Asset
     protected static $js = array();
     protected static $scripts = array();
     protected static $domain = '/';
-	protected static $prefix = '';
+    protected static $prefix = '';
+    protected static $hash;
 
     /**
      * Check environment
@@ -54,6 +55,16 @@ class Asset
     }
 
     /**
+     * Set cache buster JSON file
+     *
+     * @return void
+    */
+    public static function setCachebuster($cachebuster)
+    {
+        self::$hash = file_exists($cachebuster) ? json_decode(file_get_contents($cachebuster)) : (object)[];
+    }
+
+    /**
      * Add new asset
      *
      * @param string $a
@@ -66,13 +77,13 @@ class Asset
         if (preg_match("/\.css/i", $a))
         {
             // css
-            self::$css[] = $a;
+            self::$css[] = property_exists(self::$hash, $a) ? $a . "?" . self::$hash->{$a} : $a;
         }
 
         elseif (preg_match("/\.js/i", $a))
         {
             // js
-            self::$js[$name][] = $a;
+            self::$js[$name][] = property_exists(self::$hash, $a) ? $a . "?" . self::$hash->{$a} : $a;
         }
     }
 

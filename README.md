@@ -42,12 +42,18 @@ Asset::add('js/some.js', 'footer');
 $script1 = '$("#hello").html("Hello World!")';
 Asset::addScript($script1, 'ready');
 
-// loads css assets (place this in your master layout before close head tag)
+// loads css assets (place this in your master layout before close head tag) wrapped in <link> tags
 Asset::css();
 
-// loads js assets for your header and footer
+// loads css assets (place this in your master layout before close head tag) not wrapped in <link> tags and joined using a custom separator
+Asset::cssRaw('\n');
+
+// loads js assets for your header and footer wrapped in <script> tags
 Asset::js();
 Asset::js('header');
+
+// loads js assets for your header and footer not wrapped in <script> tags and joined using a custom separator
+Asset::jsRaw('\n');
 
 // loads all scripts for your header, footer or for your $(document).ready() function
 Asset::scripts('header');
@@ -61,6 +67,11 @@ Asset::addFirst('js/toBeLoadedFirst.js');
 // must end with slash ('/') and point to your files (domain alias, cdn etc.)
 // must be placed before Asset::css() or Asset::js() statements
 Asset::setDomain('http://static.mydomain.ltd/');
+
+// set a cache buster file that contains asset hashes
+// it should be a JSON file should be structured as follows: {"filename.js":"hash","filename.css":"hash",...}
+// if provided, your assets URLs will be appended with "?hash" string (e.g., http://example.com/filename.css?529e54acf891ccc6592f115afa1cc077) 
+Asset::setCachebuster(public_path() . '/build/assets.json');
 ```
 
 ## Example layout structure
@@ -93,6 +104,8 @@ Asset::setDomain('http://static.mydomain.ltd/');
 </html>
 ```
 ## Changelog
+
+v2.1 - Added setCachebuster(), jsRaw() and cssRaw() methods
 
 v2.0 - Added setPrefix() method
 

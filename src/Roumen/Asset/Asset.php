@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.3.2
+ * @version 2.3.3
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -17,7 +17,7 @@ class Asset
     protected static $scripts = array();
     protected static $domain = '/';
     protected static $prefix = '';
-    protected static $hash;
+    protected static $hash = null;
 
     /**
      * Check environment
@@ -83,13 +83,13 @@ class Asset
         if (preg_match("/\.css/i", $a))
         {
             // css
-            self::$css[] = property_exists(self::$hash, $a) ? $a . "?" . self::$hash->{$a} : $a;
+            self::$css[] = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
         }
 
         elseif (preg_match("/\.js/i", $a))
         {
             // js
-            self::$js[$name][] = property_exists(self::$hash, $a) ? $a . "?" . self::$hash->{$a} : $a;
+            self::$js[$name][] = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
         }
     }
 
@@ -118,7 +118,7 @@ class Asset
                 array_unshift(self::$js[$name], $a);
             } else
                 {
-                    self::$js[$name][] = property_exists(self::$hash, $a) ? $a . "?" . self::$hash->{$a} : $a;
+                    self::$js[$name][] = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
                 }
         }
     }

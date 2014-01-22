@@ -37,6 +37,8 @@ class Asset
     /**
      * Set domain name
      *
+     * @param string $url
+     *
      * @return void
     */
     public static function setDomain($url)
@@ -47,6 +49,8 @@ class Asset
     /**
      * Set prefix
      *
+     * @param string $prefix
+     *
      * @return void
     */
     public static function setPrefix($prefix)
@@ -56,6 +60,8 @@ class Asset
 
     /**
      * Set cache buster JSON file
+     *
+     * @param string $cachebuster
      *
      * @return void
     */
@@ -112,7 +118,7 @@ class Asset
                 array_unshift(self::$js[$name], $a);
             } else
                 {
-                    self::$js[$name][] = $a;
+                    self::$js[$name][] = property_exists(self::$hash, $a) ? $a . "?" . self::$hash->{$a} : $a;
                 }
         }
     }
@@ -135,6 +141,7 @@ class Asset
     /**
      * Add new style
      *
+     * @param string $style
      * @param string $s
      *
      * @return void
@@ -144,6 +151,33 @@ class Asset
         self::$styles[$s][] = $style;
     }
 
+
+    /**
+     * Loads all items from $css array not wrapped in <link> tags
+     *
+     * @param string $separator
+     *
+     * @return void
+    */
+    public static function cssRaw($separator = "")
+    {
+        self::checkEnv();
+
+        if (!empty(self::$css))
+        {
+            foreach(self::$css as $file)
+            {
+                if (preg_match('/(https?:)?\/\//i', $file))
+                {
+                    $url = $file;
+                } else
+                    {
+                        $url = self::$domain . $file;
+                    }
+                echo self::$prefix . $url . $separator;
+            }
+        }
+    }
 
     /**
      * Loads all items from $css array
@@ -204,9 +238,40 @@ class Asset
 
 
     /**
+     * Loads items from $js array not wrapped in <script> tags
+     *
+     * @param string $separator
+     * @param string $name
+     *
+     * @return void
+    */
+    public static function jsRaw($separator = "", $name = 'footer')
+    {
+        self::checkEnv();
+
+        if (!empty(self::$js[$name]))
+        {
+            foreach(self::$js[$name] as $file)
+            {
+                if (preg_match('/(https?:)?\/\//i', $file))
+                {
+                    $url = $file;
+                } else
+                    {
+                       $url = self::$domain . $file;
+                    }
+                echo self::$prefix . $url . $separator;
+            }
+        }
+
+    }
+
+    /**
      * Loads items from $js array
      *
      * @param string $name
+     * @param boolean $tags
+     * @param string $join
      *
      * @return void
     */
@@ -214,6 +279,7 @@ class Asset
     {
         self::checkEnv();
 
+        if ($name === false) $name = 'footer';
         if (!empty(self::$js[$name]))
         {
             foreach(self::$js[$name] as $file)
@@ -230,7 +296,6 @@ class Asset
         }
 
     }
-
 
     /**
      * Loads items from $scripts array

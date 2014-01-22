@@ -42,12 +42,18 @@ Asset::add('js/some.js', 'footer');
 $script1 = '$("#hello").html("Hello World!")';
 Asset::addScript($script1, 'ready');
 
-// loads css assets (place this in your master layout before close head tag)
+// loads css assets (place this in your master layout before close head tag) wrapped in <link> tags
 Asset::css();
 
-// loads js assets for your header and footer
+// loads css assets (place this in your master layout before close head tag) not wrapped in <link> tags and joined using a custom separator
+Asset::cssRaw('\n');
+
+// loads js assets for your header and footer wrapped in <script> tags
 Asset::js();
 Asset::js('header');
+
+// loads js assets for your header and footer not wrapped in <script> tags and joined using a custom separator
+Asset::jsRaw('\n');
 
 // loads all scripts for your header, footer or for your $(document).ready() function
 Asset::scripts('header');
@@ -98,6 +104,8 @@ Asset::setCachebuster(public_path() . '/build/assets.json');
 </html>
 ```
 ## Changelog
+
+v2.1 - Added setCachebuster(), jsRaw() and cssRaw() methods
 
 v2.0 - Added setPrefix() method
 

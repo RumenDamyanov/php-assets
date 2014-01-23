@@ -29,10 +29,10 @@ Don't forget to use ``composer update`` and ``composer dump-autoload`` when is n
 ## Example
 
 ```php
-// adds css asset (accepts an both string and array input)
+// adds css asset (accepts string or array input)
 Asset::add('css/default.css');
 
-// adds js asset (accepts an both string and array input)
+// adds js asset (accepts string or array input)
 Asset::add('js/some.js');
 
 // adds js asset to the 'footer' array 

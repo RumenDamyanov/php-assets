@@ -29,13 +29,13 @@ Don't forget to use ``composer update`` and ``composer dump-autoload`` when is n
 ## Example
 
 ```php
-// adds css asset
+// adds css asset (accepts an both string and array input)
 Asset::add('css/default.css');
 
-// adds js asset
-Asset::add('js/home.js');
+// adds js asset (accepts an both string and array input)
+Asset::add('js/some.js');
 
-// adds js asset to the 'footer' array
+// adds js asset to the 'footer' array 
 Asset::add('js/some.js', 'footer');
 
 // adds script to 'ready' array (scripts are loaded in $(document).ready() function)

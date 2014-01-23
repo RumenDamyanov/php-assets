@@ -80,16 +80,36 @@ class Asset
     */
     public static function add($a, $name = 'footer')
     {
-        if (preg_match("/\.css/i", $a))
+        if (is_array($a))
         {
-            // css
-            self::$css[] = property_exists(self::$hash, $a) ? $a . "?" . self::$hash->{$a} : $a;
-        }
+            foreach ($a as $item)
+            {
+                if (preg_match("/\.css/i", $item))
+                {
+                    // css
+                    self::$css[] = property_exists(self::$hash, $item) ? $item . "?" . self::$hash->{$item} : $item;
+                }
 
-        elseif (preg_match("/\.js/i", $a))
+                elseif (preg_match("/\.js/i", $item))
+                {
+                    // js
+                    self::$js[$name][] = property_exists(self::$hash, $item) ? $item . "?" . self::$hash->{$item} : $item;
+                }
+            }
+        }
+        else
         {
-            // js
-            self::$js[$name][] = property_exists(self::$hash, $a) ? $a . "?" . self::$hash->{$a} : $a;
+            if (preg_match("/\.css/i", $a))
+            {
+                // css
+                self::$css[] = property_exists(self::$hash, $a) ? $a . "?" . self::$hash->{$a} : $a;
+            }
+
+            elseif (preg_match("/\.js/i", $a))
+            {
+                // js
+                self::$js[$name][] = property_exists(self::$hash, $a) ? $a . "?" . self::$hash->{$a} : $a;
+            }
         }
     }
 

@@ -4,17 +4,17 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.3.3
+ * @version 2.3.4
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class Asset
 {
 
-    protected static $css = array();
-    protected static $styles = array();
-    protected static $js = array();
-    protected static $scripts = array();
+    protected static $css = [];
+    protected static $styles = [];
+    protected static $js = [];
+    protected static $scripts = [];
     protected static $domain = '/';
     protected static $prefix = '';
     protected static $hash = null;
@@ -80,6 +80,22 @@ class Asset
     */
     public static function add($a, $name = 'footer')
     {
+        if (is_array($a))
+            foreach ($a as $item) self::processAdd($item, $name);
+        else
+            self::processAdd($a, $name);
+    }
+
+    /**
+     * Process add method
+     *
+     * @param string $a
+     * @param string $name
+     *
+     * @return void
+    */
+    protected static function processAdd($a, $name)
+    {
         if (preg_match("/\.css/i", $a))
         {
             // css
@@ -92,7 +108,6 @@ class Asset
             self::$js[$name][] = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
         }
     }
-
 
     /**
      * Add new asset as first in its array

@@ -1,6 +1,7 @@
 {
     "name": "roumen/asset",
     "description": "Laravel 4 assets manager.",
+    "homepage": "http://roumen.it/projects/laravel-assets",
     "keywords": ["laravel", "asset", "assets", "manager"],
     "license": "MIT",
     "authors": [
@@ -8,7 +9,7 @@
             "name": "Roumen Damianoff",
             "email": "roumen@dawebs.com",
             "role": "Developer",
-            "homepage": "http://roumen.it/projects/laravel-assets"
+            "homepage": "http://roumen.it"
         }
     ],
     "require": {

@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.3.4
+ * @version 2.3.5
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -96,16 +96,19 @@ class Asset
     */
     protected static function processAdd($a, $name)
     {
+        // hash?
+        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
+
         if (preg_match("/\.css/i", $a))
         {
             // css
-            self::$css[] = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
+            self::$css[] = $a;
         }
 
         elseif (preg_match("/\.js/i", $a))
         {
             // js
-            self::$js[$name][] = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
+            self::$js[$name][] = $a;
         }
     }
 
@@ -119,6 +122,9 @@ class Asset
     */
     public static function addFirst($a, $name = 'footer')
     {
+        // hash?
+        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
+
         if (preg_match("/\.css/i", $a))
         {
             // css
@@ -133,7 +139,7 @@ class Asset
                 array_unshift(self::$js[$name], $a);
             } else
                 {
-                    self::$js[$name][] = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
+                    self::$js[$name][] = $a;
                 }
         }
     }

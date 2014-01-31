@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.3.5
+ * @version 2.3.6
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -12,6 +12,7 @@ class Asset
 {
 
     protected static $css = [];
+    protected static $less = [];
     protected static $styles = [];
     protected static $js = [];
     protected static $scripts = [];
@@ -105,6 +106,12 @@ class Asset
             self::$css[] = $a;
         }
 
+        if (preg_match("/\.less/i", $a))
+        {
+            // less
+            self::$less[] = $a;
+        }
+
         elseif (preg_match("/\.js/i", $a))
         {
             // js
@@ -129,6 +136,12 @@ class Asset
         {
             // css
             array_unshift(self::$css, $a);
+        }
+
+        if (preg_match("/\.less/i", $a))
+        {
+            // less
+            array_unshift(self::$less, $a);
         }
 
         elseif (preg_match("/\.js/i", $a))
@@ -221,6 +234,58 @@ class Asset
                         $url = self::$domain . $file;
                     }
                 echo self::$prefix . '<link rel="stylesheet" type="text/css" href="' . $url . '" />' . "\n";
+            }
+        }
+    }
+
+    /**
+     * Loads all items from $less array not wrapped in <link> tags
+     *
+     * @param string $separator
+     *
+     * @return void
+    */
+    public static function lessRaw($separator = "")
+    {
+        self::checkEnv();
+
+        if (!empty(self::$less))
+        {
+            foreach(self::$less as $file)
+            {
+                if (preg_match('/(https?:)?\/\//i', $file))
+                {
+                    $url = $file;
+                } else
+                    {
+                        $url = self::$domain . $file;
+                    }
+                echo self::$prefix . $url . $separator;
+            }
+        }
+    }
+
+    /**
+     * Loads all items from $less array
+     *
+     * @return void
+    */
+    public static function less()
+    {
+        self::checkEnv();
+
+        if (!empty(self::$less))
+        {
+            foreach(self::$less as $file)
+            {
+                if (preg_match('/(https?:)?\/\//i', $file))
+                {
+                    $url = $file;
+                } else
+                    {
+                        $url = self::$domain . $file;
+                    }
+                echo self::$prefix . '<link rel="stylesheet/less" type="text/css" href="' . $url . '" />' . "\n";
             }
         }
     }

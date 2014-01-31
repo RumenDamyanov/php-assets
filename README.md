@@ -30,12 +30,15 @@ Don't forget to use ``composer update`` and ``composer dump-autoload`` when is n
 
 ```php
 // adds css asset (accepts string or array input)
-Asset::add('css/default.css');
+Asset::add('styles/default.css');
+
+// adds less asset (accepts string or array input)
+Asset::add('styles/default.less');
 
 // adds js asset (accepts string or array input)
 Asset::add('js/some.js');
 
-// adds js asset to the 'footer' array 
+// adds js asset to the 'footer' array
 Asset::add('js/some.js', 'footer');
 
 // adds script to 'ready' array (scripts are loaded in $(document).ready() function)
@@ -83,6 +86,8 @@ Asset::setCachebuster(public_path() . '/build/assets.json');
 		<title>Title</title>
 		<!-- css files -->
 		{{ Asset::css() }}
+		<!-- less files -->
+		{{ Asset::less() }}
 		<!-- css styles -->
 		{{ Asset::styles() }}
 		<!-- js files (header) -->
@@ -104,6 +109,8 @@ Asset::setCachebuster(public_path() . '/build/assets.json');
 </html>
 ```
 ## Changelog
+
+v2.3.6 - Added LESS support
 
 v2.3.3 - Added setCachebuster(), jsRaw() and cssRaw() methods
 

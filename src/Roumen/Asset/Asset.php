@@ -4,18 +4,18 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.3.6
+ * @version 2.3.7
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class Asset
 {
 
-    protected static $css = [];
-    protected static $less = [];
-    protected static $styles = [];
-    protected static $js = [];
-    protected static $scripts = [];
+    protected static $css = array();
+    protected static $less = array();
+    protected static $styles = array();
+    protected static $js = array();
+    protected static $scripts = array();
     protected static $domain = '/';
     protected static $prefix = '';
     protected static $hash = null;
@@ -68,7 +68,7 @@ class Asset
     */
     public static function setCachebuster($cachebuster)
     {
-        self::$hash = file_exists($cachebuster) ? json_decode(file_get_contents($cachebuster)) : (object)[];
+        if (file_exists($cachebuster)) self::$hash = json_decode(file_get_contents($cachebuster));
     }
 
     /**
@@ -97,8 +97,7 @@ class Asset
     */
     protected static function processAdd($a, $name)
     {
-        // hash?
-        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
+        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a."?".self::$hash->{$a} : $a;
 
         if (preg_match("/\.css/i", $a))
         {
@@ -129,8 +128,7 @@ class Asset
     */
     public static function addFirst($a, $name = 'footer')
     {
-        // hash?
-        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a . "?" . self::$hash->{$a} : $a;
+        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a."?".self::$hash->{$a} : $a;
 
         if (preg_match("/\.css/i", $a))
         {

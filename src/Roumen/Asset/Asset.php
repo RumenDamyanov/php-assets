@@ -4,21 +4,21 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.3.7
+ * @version 2.3.8
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
 class Asset
 {
 
-    protected static $css = array();
-    protected static $less = array();
-    protected static $styles = array();
-    protected static $js = array();
-    protected static $scripts = array();
-    protected static $domain = '/';
-    protected static $prefix = '';
-    protected static $hash = null;
+    public static $css = array();
+    public static $less = array();
+    public static $styles = array();
+    public static $js = array();
+    public static $scripts = array();
+    public static $domain = '/';
+    public static $prefix = '';
+    public static $hash = null;
 
     /**
      * Check environment

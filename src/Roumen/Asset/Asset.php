@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.3.8
+ * @version 2.3.9
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -19,6 +19,7 @@ class Asset
     public static $domain = '/';
     public static $prefix = '';
     public static $hash = null;
+    public static $environment = null;
 
     /**
      * Check environment
@@ -27,9 +28,13 @@ class Asset
     */
     public static function checkEnv()
     {
-        $env = \App::environment();
+        if (self::$environment == null)
+        {
+            self::$environment = \App::environment();
+        }
 
-        if (($env == 'local' || $env == 'testing') && (self::$domain === '/'))
+        // use only local files in local environment
+        if (self::$environment == 'local' && self::$domain != '/')
         {
             self::$domain = '/';
         }

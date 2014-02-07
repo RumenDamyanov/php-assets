@@ -8,6 +8,7 @@ class AssetTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
+        Asset::$environment = 'local';
     }
 
     public function testAdd()
@@ -59,12 +60,93 @@ class AssetTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('test2', Asset::$styles['foobar'][0]);
     }
 
-    public function testRaw()
+    public function testCssRaw()
     {
-        //TODO
+        Asset::$css = array();
+
+        Asset::add(array('1.css','2.css','3.css'));
+        $this->expectOutputString('/1.css,/2.css,/3.css,', Asset::cssRaw(','));
     }
 
-    public function testWrapped()
+    public function testCssWrapped()
+    {
+        Asset::$css = array();
+        Asset::add(array('1.css','http://foo.dev/2.css'), 'header');
+
+        $expected = '<link rel="stylesheet" type="text/css" href="/1.css" />'."\n".'<link rel="stylesheet" type="text/css" href="http://foo.dev/2.css" />'."\n";
+
+        $this->expectOutputString($expected, Asset::css('header'));
+    }
+
+    public function testLessRaw()
+    {
+        Asset::$less = array();
+
+        Asset::add(array('1.less','2.less','3.less'));
+        $this->expectOutputString('/1.less,/2.less,/3.less,', Asset::lessRaw(','));
+    }
+
+    public function testLessWrapped()
+    {
+        Asset::$less = array();
+        Asset::add(array('1.less','http://foo.dev/2.less'), 'header');
+
+        $expected = '<link rel="stylesheet/less" type="text/css" href="/1.less" />'."\n".'<link rel="stylesheet/less" type="text/css" href="http://foo.dev/2.less" />'."\n";
+
+        $this->expectOutputString($expected, Asset::less('header'));
+    }
+
+    public function testJsRaw()
+    {
+        Asset::$js = array();
+
+        Asset::add(array('1.js','2.js','3.js'));
+        $this->expectOutputString('/1.js,/2.js,/3.js,', Asset::jsRaw(','));
+    }
+
+    public function testJsWrapped()
+    {
+        Asset::$js = array();
+        Asset::add(array('1.js','http://foo.dev/2.js'), 'footer');
+
+        $expected = '<script src="/1.js"></script>'."\n".'<script src="http://foo.dev/2.js"></script>'."\n";
+
+        $this->expectOutputString($expected, Asset::js('footer'));
+    }
+
+    public function testStyles()
+    {
+        Asset::$styles = array();
+        $s = 'h1 {font:26px;}';
+        Asset::addStyle($s);
+
+        $expected = "\n" . '<style type="text/css">' ."\n" . $s ."\n". '</style>' . "\n";
+
+        $this->expectOutputString($expected, Asset::styles());
+    }
+
+    public function testDomain()
+    {
+        Asset::setDomain('http://cdn.domain.tld/');
+
+        $this->assertEquals('http://cdn.domain.tld/', Asset::$domain);
+    }
+
+    public function testCheckEnv()
+    {
+        Asset::setDomain('http://cdn.domain.tld/');
+        Asset::$environment = 'online';
+        Asset::checkEnv();
+
+        $this->assertEquals('http://cdn.domain.tld/', Asset::$domain);
+
+        Asset::$environment = 'local';
+        Asset::checkEnv();
+
+        $this->assertEquals('/', Asset::$domain);
+    }
+
+    public function testHash()
     {
         //TODO
     }

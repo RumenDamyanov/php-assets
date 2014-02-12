@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.3.9
+ * @version 2.3.10
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -160,6 +160,82 @@ class Asset
         }
     }
 
+    /**
+     * Add new asset before another asset in its array
+     *
+     * @param string $a
+     * @param string $b
+     * @param string $name
+     *
+     * @return void
+    */
+    public static function addBefore($a, $b, $name = 'footer')
+    {
+        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a."?".self::$hash->{$a} : $a;
+
+        if (preg_match("/\.css/i", $a))
+        {
+            // css
+            $bpos = array_search($b, self::$css);
+
+            if ($bpos === 0)
+            {
+                self::addFirst($a, $name);
+            } elseif ($bpos >= 1)
+                {
+                    $barr = array_slice(self::$css, $bpos);
+                    $aarr = array_slice(self::$css, 0, $bpos);
+                    array_push($aarr, $a);
+                    self::$css = array_merge($aarr, $barr);
+                } else
+                    {
+                        self::$css[] = $a;
+                    }
+        }
+
+        if (preg_match("/\.less/i", $a))
+        {
+            // less
+            $bpos = array_search($b, self::$less);
+
+            if ($bpos === 0)
+            {
+                self::addFirst($a, $name);
+            } elseif ($bpos >= 1)
+                {
+                    $barr = array_slice(self::$less, $bpos);
+                    $aarr = array_slice(self::$less, 0, $bpos);
+                    array_push($aarr, $a);
+                    self::$less = array_merge($aarr, $barr);
+                } else
+                    {
+                        self::$less[] = $a;
+                    }
+        }
+
+        elseif (preg_match("/\.js/i", $a))
+        {
+            // js
+            if (!empty(self::$js[$name]))
+            {
+                $bpos = array_search($b, self::$js[$name]);
+
+                if ($bpos === 0)
+                {
+                    self::addFirst($a, $name);
+                } elseif ($bpos >= 1)
+                    {
+                        $barr = array_slice(self::$js[$name], $bpos);
+                        $aarr = array_slice(self::$js[$name], 0, $bpos);
+                        array_push($aarr, $a);
+                        self::$js[$name] = array_merge($aarr, $barr);
+                    } else
+                        {
+                            self::$js[$name][] = $a;
+                        }
+            }
+        }
+}
 
     /**
      * Add new script

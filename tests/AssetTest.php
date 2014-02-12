@@ -16,48 +16,126 @@ class AssetTest extends PHPUnit_Framework_TestCase
         Asset::add('style.css');
         Asset::add('style.less');
         Asset::add('script.js');
-        Asset::add('script1.js','footer');
-        Asset::add('script2.js','header');
-        Asset::add('script3.js','foobar');
+        Asset::add('script.js','foobar');
 
         $this->assertEquals('style.css', Asset::$css[0]);
         $this->assertEquals('style.less', Asset::$less[0]);
         $this->assertEquals('script.js', Asset::$js['footer'][0]);
-        $this->assertEquals('script1.js', Asset::$js['footer'][1]);
-        $this->assertEquals('script2.js', Asset::$js['header'][0]);
-        $this->assertEquals('script3.js', Asset::$js['foobar'][0]);
+        $this->assertEquals('script.js', Asset::$js['foobar'][0]);
 
-        Asset::addFirst('styleFirst.css');
-        $this->assertEquals('styleFirst.css', Asset::$css[0]);
-        $this->assertEquals('style.css', Asset::$css[1]);
+    }
 
-        Asset::addFirst('styleFirst.less');
-        $this->assertEquals('styleFirst.less', Asset::$less[0]);
-        $this->assertEquals('style.less', Asset::$less[1]);
-
-        Asset::addFirst('scriptFirst.js');
-        $this->assertEquals('scriptFirst.js', Asset::$js['footer'][0]);
-        $this->assertEquals('script.js', Asset::$js['footer'][1]);
-
-        Asset::addFirst('scriptFirst.js','header');
-        $this->assertEquals('scriptFirst.js', Asset::$js['header'][0]);
-        $this->assertEquals('script2.js', Asset::$js['header'][1]);
-
-        Asset::addFirst('scriptFirst.js','foobar');
-        $this->assertEquals('scriptFirst.js', Asset::$js['foobar'][0]);
-        $this->assertEquals('script3.js', Asset::$js['foobar'][1]);
-
+    public function testAddScript()
+    {
         Asset::addScript('test');
+
         $this->assertEquals('test', Asset::$scripts['footer'][0]);
 
-        Asset::addScript('test2','header');
-        $this->assertEquals('test2', Asset::$scripts['header'][0]);
+        Asset::addScript('test','foobar');
 
+        $this->assertEquals('test', Asset::$scripts['foobar'][0]);
+    }
+
+    public function testAddStyle()
+    {
         Asset::addStyle('test');
         $this->assertEquals('test', Asset::$styles['header'][0]);
 
-        Asset::addStyle('test2','foobar');
-        $this->assertEquals('test2', Asset::$styles['foobar'][0]);
+        Asset::addStyle('test','foobar');
+        $this->assertEquals('test', Asset::$styles['foobar'][0]);
+    }
+
+    public function testAddFirst()
+    {
+        Asset::$css = array();
+        Asset::$less = array();
+        Asset::$js = array();
+
+        Asset::add('style.css');
+        Asset::addFirst('styleFirst.css');
+
+        $this->assertEquals('styleFirst.css', Asset::$css[0]);
+        $this->assertEquals('style.css', Asset::$css[1]);
+
+        Asset::add('style.less');
+        Asset::addFirst('styleFirst.less');
+
+        $this->assertEquals('styleFirst.less', Asset::$less[0]);
+        $this->assertEquals('style.less', Asset::$less[1]);
+
+        Asset::add('script.js');
+        Asset::addFirst('scriptFirst.js');
+
+        $this->assertEquals('scriptFirst.js', Asset::$js['footer'][0]);
+        $this->assertEquals('script.js', Asset::$js['footer'][1]);
+
+        Asset::add('script3.js','foobar');
+        Asset::addFirst('scriptFirst.js','foobar');
+
+        $this->assertEquals('scriptFirst.js', Asset::$js['foobar'][0]);
+        $this->assertEquals('script3.js', Asset::$js['foobar'][1]);
+    }
+
+    public function testAddBefore()
+    {
+        Asset::$css = array();
+        Asset::$less = array();
+        Asset::$js = array();
+
+        Asset::add(array('1.css','2.css','3.css'));
+        Asset::addBefore('before2.css','2.css');
+
+        $this->assertEquals('before2.css', Asset::$css[1]);
+        $this->assertEquals('2.css', Asset::$css[2]);
+
+        Asset::add(array('1.less','2.less','3.less'));
+        Asset::addBefore('before2.less','2.less');
+
+        $this->assertEquals('before2.less', Asset::$less[1]);
+        $this->assertEquals('2.less', Asset::$less[2]);
+
+        Asset::add(array('1.js','2.js','3.js'));
+        Asset::addBefore('before2.js','2.js');
+
+        $this->assertEquals('before2.js', Asset::$js['footer'][1]);
+        $this->assertEquals('2.js', Asset::$js['footer'][2]);
+
+        Asset::add(array('1.js','2.js','3.js'),'foobar');
+        Asset::addBefore('before2.js','2.js', 'foobar');
+
+        $this->assertEquals('before2.js', Asset::$js['foobar'][1]);
+        $this->assertEquals('2.js', Asset::$js['foobar'][2]);
+    }
+
+    public function testAddAfter()
+    {
+        Asset::$css = array();
+        Asset::$less = array();
+        Asset::$js = array();
+
+        Asset::add(array('1.css','2.css','3.css'));
+        Asset::addAfter('after2.css','2.css');
+
+        $this->assertEquals('after2.css', Asset::$css[2]);
+        $this->assertEquals('2.css', Asset::$css[1]);
+
+        Asset::add(array('1.less','2.less','3.less'));
+        Asset::addAfter('after2.less','2.less');
+
+        $this->assertEquals('after2.less', Asset::$less[2]);
+        $this->assertEquals('2.less', Asset::$less[1]);
+
+        Asset::add(array('1.js','2.js','3.js'));
+        Asset::addAfter('after2.js','2.js');
+
+        $this->assertEquals('after2.js', Asset::$js['footer'][2]);
+        $this->assertEquals('2.js', Asset::$js['footer'][1]);
+
+        Asset::add(array('1.js','2.js','3.js'),'foobar');
+        Asset::addAfter('after2.js','2.js', 'foobar');
+
+        $this->assertEquals('after2.js', Asset::$js['foobar'][2]);
+        $this->assertEquals('2.js', Asset::$js['foobar'][1]);
     }
 
     public function testCssRaw()

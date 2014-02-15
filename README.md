@@ -63,8 +63,14 @@ Asset::scripts('header');
 Asset::scripts('footer');
 Asset::scripts('ready');
 
-// in case that you need to load asset as first element in its own array
+// adds an asset as first in its own array
 Asset::addFirst('js/toBeLoadedFirst.js');
+
+// adds an asset before another in its own array
+Asset::addBefore('js/toBeLoadedBefore.js','js/ThisElement.js');
+
+// adds an asset after another in its own array
+Asset::addAfter('js/toBeLoadedAfter.js','js/ThisElement.js');
 
 // set a domain name for your local assets in production environment
 // must end with slash ('/') and point to your files (domain alias, cdn etc.)
@@ -109,6 +115,8 @@ Asset::setCachebuster(public_path() . '/build/assets.json');
 </html>
 ```
 ## Changelog
+
+v2.3.11 - Added addBefore() and addAfter() methods
 
 v2.3.6 - Added LESS support
 

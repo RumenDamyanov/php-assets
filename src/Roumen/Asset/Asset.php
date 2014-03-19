@@ -20,6 +20,7 @@ class Asset
     public static $prefix = '';
     public static $hash = null;
     public static $environment = null;
+    protected static $cacheBusterGeneratorFunction = null;
 
     /**
      * Check environment
@@ -28,15 +29,15 @@ class Asset
     */
     public static function checkEnv()
     {
-        if (self::$environment == null)
+        if (static::$environment == null)
         {
-            self::$environment = \App::environment();
+            static::$environment = \App::environment();
         }
 
         // use only local files in local environment
-        if (self::$environment == 'local' && self::$domain != '/')
+        if (static::$environment == 'local' && static::$domain != '/')
         {
-            self::$domain = '/';
+            static::$domain = '/';
         }
     }
 
@@ -49,7 +50,7 @@ class Asset
     */
     public static function setDomain($url)
     {
-        self::$domain = $url;
+        static::$domain = $url;
     }
 
     /**
@@ -61,7 +62,7 @@ class Asset
     */
     public static function setPrefix($prefix)
     {
-        self::$prefix = $prefix;
+        static::$prefix = $prefix;
     }
 
     /**
@@ -73,7 +74,39 @@ class Asset
     */
     public static function setCachebuster($cachebuster)
     {
-        if (file_exists($cachebuster)) self::$hash = json_decode(file_get_contents($cachebuster));
+        if (file_exists($cachebuster)) static::$hash = json_decode(file_get_contents($cachebuster));
+    }
+    
+    /**
+     * Set cache buster filename
+     *
+     * @param Closure $fn
+     * 
+     * Closure must accepts ONE argument {String}
+     * and return a {String}
+     *
+     * @return void
+    */
+    private static function setCacheBusterGeneratorFunction(\Closure $fn)
+    {
+        static::$cacheBusterGeneratorFunction = $fn;
+    }
+    
+    /**
+     * Generate cache buster filename
+     *
+     * @param string $a
+     * @param string $name
+     *
+     * @return void
+    */
+    private static function generateCacheBusterFilename($a)
+    {
+        if(!static::$cacheBusterGeneratorFunction instanceof \Closure){
+            return (static::$hash && property_exists(static::$hash, $a)) ? static::$hash->{$a} : $a;
+        }else{
+            return static::$cacheBusterGeneratorFunction($a);
+        }
     }
 
     /**
@@ -87,9 +120,9 @@ class Asset
     public static function add($a, $name = 'footer')
     {
         if (is_array($a))
-            foreach ($a as $item) self::processAdd($item, $name);
+            foreach ($a as $item) static::processAdd($item, $name);
         else
-            self::processAdd($a, $name);
+            static::processAdd($a, $name);
     }
 
     /**
@@ -102,24 +135,24 @@ class Asset
     */
     protected static function processAdd($a, $name)
     {
-        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a."?".self::$hash->{$a} : $a;
+        $a = static::generateCacheBusterFilename($a);
 
         if (preg_match("/\.css/i", $a))
         {
             // css
-            self::$css[] = $a;
+            static::$css[] = $a;
         }
 
         if (preg_match("/\.less/i", $a))
         {
             // less
-            self::$less[] = $a;
+            static::$less[] = $a;
         }
 
         elseif (preg_match("/\.js/i", $a))
         {
             // js
-            self::$js[$name][] = $a;
+            static::$js[$name][] = $a;
         }
     }
 
@@ -133,29 +166,29 @@ class Asset
     */
     public static function addFirst($a, $name = 'footer')
     {
-        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a."?".self::$hash->{$a} : $a;
+        $a = static::generateCacheBusterFilename($a);
 
         if (preg_match("/\.css/i", $a))
         {
             // css
-            array_unshift(self::$css, $a);
+            array_unshift(static::$css, $a);
         }
 
         if (preg_match("/\.less/i", $a))
         {
             // less
-            array_unshift(self::$less, $a);
+            array_unshift(static::$less, $a);
         }
 
         elseif (preg_match("/\.js/i", $a))
         {
             // js
-            if (!empty(self::$js[$name]))
+            if (!empty(static::$js[$name]))
             {
-                array_unshift(self::$js[$name], $a);
+                array_unshift(static::$js[$name], $a);
             } else
                 {
-                    self::$js[$name][] = $a;
+                    static::$js[$name][] = $a;
                 }
         }
     }
@@ -171,67 +204,67 @@ class Asset
     */
     public static function addBefore($a, $b, $name = 'footer')
     {
-        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a."?".self::$hash->{$a} : $a;
+        $a = static::generateCacheBusterFilename($a);
 
         if (preg_match("/\.css/i", $a))
         {
             // css
-            $bpos = array_search($b, self::$css);
+            $bpos = array_search($b, static::$css);
 
             if ($bpos === 0)
             {
-                self::addFirst($a, $name);
+                static::addFirst($a, $name);
             } elseif ($bpos >= 1)
                 {
-                    $barr = array_slice(self::$css, $bpos);
-                    $aarr = array_slice(self::$css, 0, $bpos);
+                    $barr = array_slice(static::$css, $bpos);
+                    $aarr = array_slice(static::$css, 0, $bpos);
                     array_push($aarr, $a);
-                    self::$css = array_merge($aarr, $barr);
+                    static::$css = array_merge($aarr, $barr);
                 } else
                     {
-                        self::$css[] = $a;
+                        static::$css[] = $a;
                     }
         }
 
         if (preg_match("/\.less/i", $a))
         {
             // less
-            $bpos = array_search($b, self::$less);
+            $bpos = array_search($b, static::$less);
 
             if ($bpos === 0)
             {
-                self::addFirst($a, $name);
+                static::addFirst($a, $name);
             } elseif ($bpos >= 1)
                 {
-                    $barr = array_slice(self::$less, $bpos);
-                    $aarr = array_slice(self::$less, 0, $bpos);
+                    $barr = array_slice(static::$less, $bpos);
+                    $aarr = array_slice(static::$less, 0, $bpos);
                     array_push($aarr, $a);
-                    self::$less = array_merge($aarr, $barr);
+                    static::$less = array_merge($aarr, $barr);
                 } else
                     {
-                        self::$less[] = $a;
+                        static::$less[] = $a;
                     }
         }
 
         elseif (preg_match("/\.js/i", $a))
         {
             // js
-            if (!empty(self::$js[$name]))
+            if (!empty(static::$js[$name]))
             {
-                $bpos = array_search($b, self::$js[$name]);
+                $bpos = array_search($b, static::$js[$name]);
 
                 if ($bpos === 0)
                 {
-                    self::addFirst($a, $name);
+                    static::addFirst($a, $name);
                 } elseif ($bpos >= 1)
                     {
-                        $barr = array_slice(self::$js[$name], $bpos);
-                        $aarr = array_slice(self::$js[$name], 0, $bpos);
+                        $barr = array_slice(static::$js[$name], $bpos);
+                        $aarr = array_slice(static::$js[$name], 0, $bpos);
                         array_push($aarr, $a);
-                        self::$js[$name] = array_merge($aarr, $barr);
+                        static::$js[$name] = array_merge($aarr, $barr);
                     } else
                         {
-                            self::$js[$name][] = $a;
+                            static::$js[$name][] = $a;
                         }
             }
         }
@@ -248,58 +281,58 @@ class Asset
     */
     public static function addAfter($a, $b, $name = 'footer')
     {
-        $a = (self::$hash && property_exists(self::$hash, $a)) ? $a."?".self::$hash->{$a} : $a;
+        $a = static::generateCacheBusterFilename($a);
 
         if (preg_match("/\.css/i", $a))
         {
             // css
-            $bpos = array_search($b, self::$css);
+            $bpos = array_search($b, static::$css);
 
             if ($bpos === 0 || $bpos > 0)
             {
-                $barr = array_slice(self::$css, $bpos+1);
-                $aarr = array_slice(self::$css, 0, $bpos+1);
+                $barr = array_slice(static::$css, $bpos+1);
+                $aarr = array_slice(static::$css, 0, $bpos+1);
                 array_push($aarr, $a);
-                self::$css = array_merge($aarr, $barr);
+                static::$css = array_merge($aarr, $barr);
             } else
                 {
-                    self::$css[] = $a;
+                    static::$css[] = $a;
                 }
         }
 
         if (preg_match("/\.less/i", $a))
         {
             // less
-            $bpos = array_search($b, self::$less);
+            $bpos = array_search($b, static::$less);
 
             if ($bpos === 0 || $bpos > 0)
             {
-                    $barr = array_slice(self::$less, $bpos+1);
-                    $aarr = array_slice(self::$less, 0, $bpos+1);
+                    $barr = array_slice(static::$less, $bpos+1);
+                    $aarr = array_slice(static::$less, 0, $bpos+1);
                     array_push($aarr, $a);
-                    self::$less = array_merge($aarr, $barr);
+                    static::$less = array_merge($aarr, $barr);
                 } else
                     {
-                        self::$less[] = $a;
+                        static::$less[] = $a;
                     }
         }
 
         elseif (preg_match("/\.js/i", $a))
         {
             // js
-            if (!empty(self::$js[$name]))
+            if (!empty(static::$js[$name]))
             {
-                $bpos = array_search($b, self::$js[$name]);
+                $bpos = array_search($b, static::$js[$name]);
 
                 if ($bpos === 0 || $bpos > 0)
                 {
-                    $barr = array_slice(self::$js[$name], $bpos+1);
-                    $aarr = array_slice(self::$js[$name], 0, $bpos+1);
+                    $barr = array_slice(static::$js[$name], $bpos+1);
+                    $aarr = array_slice(static::$js[$name], 0, $bpos+1);
                     array_push($aarr, $a);
-                    self::$js[$name] = array_merge($aarr, $barr);
+                    static::$js[$name] = array_merge($aarr, $barr);
                 } else
                     {
-                        self::$js[$name][] = $a;
+                        static::$js[$name][] = $a;
                     }
             }
         }
@@ -315,7 +348,7 @@ class Asset
     */
     public static function addScript($s, $name = 'footer')
     {
-        self::$scripts[$name][] = $s;
+        static::$scripts[$name][] = $s;
     }
 
 
@@ -329,7 +362,7 @@ class Asset
     */
     public static function addStyle($style, $s = 'header')
     {
-        self::$styles[$s][] = $style;
+        static::$styles[$s][] = $style;
     }
 
 
@@ -342,20 +375,20 @@ class Asset
     */
     public static function cssRaw($separator = "")
     {
-        self::checkEnv();
+        static::checkEnv();
 
-        if (!empty(self::$css))
+        if (!empty(static::$css))
         {
-            foreach(self::$css as $file)
+            foreach(static::$css as $file)
             {
                 if (preg_match('/(https?:)?\/\//i', $file))
                 {
                     $url = $file;
                 } else
                     {
-                        $url = self::$domain . $file;
+                        $url = static::$domain . $file;
                     }
-                echo self::$prefix . $url . $separator;
+                echo static::$prefix . $url . $separator;
             }
         }
     }
@@ -367,20 +400,20 @@ class Asset
     */
     public static function css()
     {
-        self::checkEnv();
+        static::checkEnv();
 
-        if (!empty(self::$css))
+        if (!empty(static::$css))
         {
-            foreach(self::$css as $file)
+            foreach(static::$css as $file)
             {
                 if (preg_match('/(https?:)?\/\//i', $file))
                 {
                     $url = $file;
                 } else
                     {
-                        $url = self::$domain . $file;
+                        $url = static::$domain . $file;
                     }
-                echo self::$prefix . '<link rel="stylesheet" type="text/css" href="' . $url . '" />' . "\n";
+                echo static::$prefix . '<link rel="stylesheet" type="text/css" href="' . $url . '" />' . "\n";
             }
         }
     }
@@ -394,20 +427,20 @@ class Asset
     */
     public static function lessRaw($separator = "")
     {
-        self::checkEnv();
+        static::checkEnv();
 
-        if (!empty(self::$less))
+        if (!empty(static::$less))
         {
-            foreach(self::$less as $file)
+            foreach(static::$less as $file)
             {
                 if (preg_match('/(https?:)?\/\//i', $file))
                 {
                     $url = $file;
                 } else
                     {
-                        $url = self::$domain . $file;
+                        $url = static::$domain . $file;
                     }
-                echo self::$prefix . $url . $separator;
+                echo static::$prefix . $url . $separator;
             }
         }
     }
@@ -419,20 +452,20 @@ class Asset
     */
     public static function less()
     {
-        self::checkEnv();
+        static::checkEnv();
 
-        if (!empty(self::$less))
+        if (!empty(static::$less))
         {
-            foreach(self::$less as $file)
+            foreach(static::$less as $file)
             {
                 if (preg_match('/(https?:)?\/\//i', $file))
                 {
                     $url = $file;
                 } else
                     {
-                        $url = self::$domain . $file;
+                        $url = static::$domain . $file;
                     }
-                echo self::$prefix . '<link rel="stylesheet/less" type="text/css" href="' . $url . '" />' . "\n";
+                echo static::$prefix . '<link rel="stylesheet/less" type="text/css" href="' . $url . '" />' . "\n";
             }
         }
     }
@@ -447,20 +480,20 @@ class Asset
     */
     public static function styles($name = 'header')
     {
-        if (($name !== '') && (!empty(self::$styles[$name])))
+        if (($name !== '') && (!empty(static::$styles[$name])))
         {
-            $p = "\n" . self::$prefix . "<style type=\"text/css\">\n" . self::$prefix;
-            foreach(self::$styles[$name] as $style)
+            $p = "\n" . static::$prefix . "<style type=\"text/css\">\n" . static::$prefix;
+            foreach(static::$styles[$name] as $style)
             {
-                $p .= $style . "\n" . self::$prefix;
+                $p .= $style . "\n" . static::$prefix;
             }
-            $p .= self::$prefix . "</style>\n";
+            $p .= static::$prefix . "</style>\n";
             echo $p;
         }
-        else if (!empty(self::$styles))
+        else if (!empty(static::$styles))
         {
-            $p = self::$prefix . "<style type=\"text/css\">\n";
-            foreach(self::$styles as $style)
+            $p = static::$prefix . "<style type=\"text/css\">\n";
+            foreach(static::$styles as $style)
             {
                 $p .= $style . "\n";
             }
@@ -480,20 +513,20 @@ class Asset
     */
     public static function jsRaw($separator = "", $name = 'footer')
     {
-        self::checkEnv();
+        static::checkEnv();
 
-        if (!empty(self::$js[$name]))
+        if (!empty(static::$js[$name]))
         {
-            foreach(self::$js[$name] as $file)
+            foreach(static::$js[$name] as $file)
             {
                 if (preg_match('/(https?:)?\/\//i', $file))
                 {
                     $url = $file;
                 } else
                     {
-                       $url = self::$domain . $file;
+                       $url = static::$domain . $file;
                     }
-                echo self::$prefix . $url . $separator;
+                echo static::$prefix . $url . $separator;
             }
         }
 
@@ -510,21 +543,21 @@ class Asset
     */
     public static function js($name = 'footer')
     {
-        self::checkEnv();
+        static::checkEnv();
 
         if ($name === false) $name = 'footer';
-        if (!empty(self::$js[$name]))
+        if (!empty(static::$js[$name]))
         {
-            foreach(self::$js[$name] as $file)
+            foreach(static::$js[$name] as $file)
             {
                 if (preg_match('/(https?:)?\/\//i', $file))
                 {
                     $url = $file;
                 } else
                     {
-                       $url = self::$domain . $file;
+                       $url = static::$domain . $file;
                     }
-                echo self::$prefix . '<script src="' . $url . '"></script>' . "\n";
+                echo static::$prefix . '<script src="' . $url . '"></script>' . "\n";
             }
         }
 
@@ -541,23 +574,23 @@ class Asset
     {
         if ($name == 'ready')
         {
-            if (!empty(self::$scripts['ready']))
+            if (!empty(static::$scripts['ready']))
             {
-                $p = self::$prefix . '<script>$(document).ready(function(){';
-                foreach(self::$scripts['ready'] as $script)
+                $p = static::$prefix . '<script>$(document).ready(function(){';
+                foreach(static::$scripts['ready'] as $script)
                 {
-                    $p .= $script . "\n" . self::$prefix;
+                    $p .= $script . "\n" . static::$prefix;
                 }
                 $p .= "});</script>\n";
                 echo $p;
             }
         } else
             {
-                if (!empty(self::$scripts[$name]))
+                if (!empty(static::$scripts[$name]))
                 {
-                    foreach(self::$scripts[$name] as $script)
+                    foreach(static::$scripts[$name] as $script)
                     {
-                        echo self::$prefix . '<script>' . $script . "</script>\n";
+                        echo static::$prefix . '<script>' . $script . "</script>\n";
                     }
                 }
             }

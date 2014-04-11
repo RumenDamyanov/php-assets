@@ -168,7 +168,7 @@ class Asset
     {
         $a = static::generateCacheBusterFilename($a);
 
-        if (preg_match("/\.css/i", $a))
+        if (preg_match("/(\.css|\/css\?)/i", $a))
         {
             // css
             array_unshift(static::$css, $a);
@@ -206,7 +206,7 @@ class Asset
     {
         $a = static::generateCacheBusterFilename($a);
 
-        if (preg_match("/\.css/i", $a))
+        if (preg_match("/(\.css|\/css\?)/i", $a))
         {
             // css
             $bpos = array_search($b, static::$css);
@@ -283,7 +283,7 @@ class Asset
     {
         $a = static::generateCacheBusterFilename($a);
 
-        if (preg_match("/\.css/i", $a))
+        if (preg_match("/(\.css|\/css\?)/i", $a))
         {
             // css
             $bpos = array_search($b, static::$css);

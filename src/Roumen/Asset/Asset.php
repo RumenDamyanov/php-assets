@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.3.11
+ * @version 2.3.12
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -76,12 +76,12 @@ class Asset
     {
         if (file_exists($cachebuster)) static::$hash = json_decode(file_get_contents($cachebuster));
     }
-    
+
     /**
      * Set cache buster filename
      *
      * @param Closure $fn
-     * 
+     *
      * Closure must accepts ONE argument {String}
      * and return a {String}
      *
@@ -91,7 +91,7 @@ class Asset
     {
         static::$cacheBusterGeneratorFunction = $fn;
     }
-    
+
     /**
      * Generate cache buster filename
      *
@@ -137,7 +137,7 @@ class Asset
     {
         $a = static::generateCacheBusterFilename($a);
 
-        if (preg_match("/\.css/i", $a))
+        if (preg_match("/(\.css|\/css\?)/i", $a))
         {
             // css
             static::$css[] = $a;

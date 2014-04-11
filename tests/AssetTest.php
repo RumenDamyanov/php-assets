@@ -146,6 +146,18 @@ class AssetTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('http://fonts.googleapis.com/css?family=Londrina+Outline', Asset::$css[0]);
         $this->assertEquals('http://fonts.googleapis.com/css?family=Nova+Square', Asset::$css[1]);
         $this->assertEquals('http://fonts.googleapis.com/css?family=Special+Elite', Asset::$css[2]);
+
+        Asset::addFirst('http://fonts.googleapis.com/css?family=Share+Tech+Mono');
+        Asset::addAfter('http://fonts.googleapis.com/css?family=Playfair+Display+SC', 'http://fonts.googleapis.com/css?family=Share+Tech+Mono');
+        Asset::addBefore('http://fonts.googleapis.com/css?family=Arapey', 'http://fonts.googleapis.com/css?family=Londrina+Outline');
+
+        $this->assertEquals('http://fonts.googleapis.com/css?family=Share+Tech+Mono', Asset::$css[0]);
+        $this->assertEquals('http://fonts.googleapis.com/css?family=Playfair+Display+SC', Asset::$css[1]);
+        $this->assertEquals('http://fonts.googleapis.com/css?family=Arapey', Asset::$css[2]);
+        $this->assertEquals('http://fonts.googleapis.com/css?family=Londrina+Outline', Asset::$css[3]);
+        $this->assertEquals('http://fonts.googleapis.com/css?family=Nova+Square', Asset::$css[4]);
+        $this->assertEquals('http://fonts.googleapis.com/css?family=Special+Elite', Asset::$css[5]);
+
     }
 
     public function testCssRaw()

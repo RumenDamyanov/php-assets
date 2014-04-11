@@ -138,6 +138,16 @@ class AssetTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('2.js', Asset::$js['foobar'][1]);
     }
 
+    public function testCssGoogleFonts()
+    {
+        Asset::$css = array();
+
+        Asset::add(array('http://fonts.googleapis.com/css?family=Londrina+Outline','http://fonts.googleapis.com/css?family=Nova+Square','http://fonts.googleapis.com/css?family=Special+Elite'));
+        $this->assertEquals('http://fonts.googleapis.com/css?family=Londrina+Outline', Asset::$css[0]);
+        $this->assertEquals('http://fonts.googleapis.com/css?family=Nova+Square', Asset::$css[1]);
+        $this->assertEquals('http://fonts.googleapis.com/css?family=Special+Elite', Asset::$css[2]);
+    }
+
     public function testCssRaw()
     {
         Asset::$css = array();

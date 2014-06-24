@@ -8,7 +8,7 @@ class AssetTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        Asset::$environment = 'local';
+        Asset::$environment = 'testing';
     }
 
     public function testAdd()
@@ -244,11 +244,6 @@ class AssetTest extends PHPUnit_Framework_TestCase
         Asset::checkEnv();
 
         $this->assertEquals('/', Asset::$domain);
-    }
-
-    public function testHash()
-    {
-        //TODO
     }
 
 }

@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.3.13
+ * @version 2.4.0
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -41,6 +41,7 @@ class Asset
     private static $useShortHandReady = false;
     private static $onUnknownExtensionDefault = Asset::ON_UNKNOWN_EXTENSION_NONE;
 
+
     /**
      * Check environment
      *
@@ -48,14 +49,18 @@ class Asset
     */
     public static function checkEnv()
     {
-        if (static::$environment == null) {
+        if (static::$environment == null)
+        {
             static::$environment = \App::environment();
         }
+
         // use only local files in local environment
-        if (static::$environment == 'local' && (static::$domain != '/')) {
+        if (static::$environment == 'local' && (static::$domain != '/'))
+        {
             static::$domain = '/';
         }
     }
+
 
     /**
      * Set domain name
@@ -66,10 +71,12 @@ class Asset
     */
     public static function setDomain($url)
     {
-        if (is_string($url)) {
+        if (is_string($url))
+        {
             static::$domain = $url;
         }
     }
+
 
     /**
      * Set prefix
@@ -83,6 +90,7 @@ class Asset
         static::$prefix = $prefix;
     }
 
+
     /**
      * Set cache buster JSON file
      *
@@ -92,10 +100,12 @@ class Asset
     */
     public static function setCachebuster($cachebuster)
     {
-        if (file_exists($cachebuster)) {
+        if (file_exists($cachebuster))
+        {
             static::$hash = json_decode(file_get_contents($cachebuster));
         }
     }
+
 
     /**
      * Set cache buster filename
@@ -112,6 +122,7 @@ class Asset
         static::$cacheBusterGeneratorFunction = $fn;
     }
 
+
     /**
      * Generate cache buster filename
      *
@@ -122,12 +133,15 @@ class Asset
     */
     private static function generateCacheBusterFilename($a)
     {
-        if(!static::$cacheBusterGeneratorFunction instanceof \Closure) {
+        if(!static::$cacheBusterGeneratorFunction instanceof \Closure)
+        {
             return (static::$hash && property_exists(static::$hash, $a)) ? static::$hash->{$a} : $a;
-        } else {
-            return static::$cacheBusterGeneratorFunction($a);
-        }
+        } else
+            {
+                return static::$cacheBusterGeneratorFunction($a);
+            }
     }
+
 
     /**
      * Set indicator if use Short Hand [$()] or Normal $( document ).ready()
@@ -141,6 +155,7 @@ class Asset
         static::$useShortHandReady = $useShortHandReady;
     }
 
+
     /**
      * Indicate what to do by default if an unknown extension is found.
      *
@@ -153,11 +168,14 @@ class Asset
     {
         if ((!is_int($onUnknownExtensionDefault))
             || ($onUnknownExtensionDefault < self::ON_UNKNOWN_EXTENSION_NONE)
-            || ($onUnknownExtensionDefault > self::ON_UNKNOWN_EXTENSION_JS)) {
+            || ($onUnknownExtensionDefault > self::ON_UNKNOWN_EXTENSION_JS))
+        {
             $onUnknownExtensionDefault = self::ON_UNKNOWN_EXTENSION_NONE;
         }
+
         static::$onUnknownExtensionDefault = $onUnknownExtensionDefault;
     }
+
 
     /**
      * Add new asset
@@ -171,14 +189,18 @@ class Asset
     */
     public static function add($a, $name = 'footer', $onUnknownExtension = false)
     {
-        if (is_array($a)) {
-            foreach ($a as $item) {
+        if (is_array($a))
+        {
+            foreach ($a as $item)
+            {
                 static::processAdd($item, $name, $onUnknownExtension);
             }
-        } else {
-            static::processAdd($a, $name, $onUnknownExtension);
-        }
+        } else
+            {
+                static::processAdd($a, $name, $onUnknownExtension);
+            }
     }
+
 
     /**
      * Identify where to add an asset:
@@ -191,24 +213,34 @@ class Asset
     */
     private static function getAddTo($a, $onUnknownExtension = false)
     {
-        if (false === $onUnknownExtension) {
+        if (false === $onUnknownExtension)
+        {
         	$onUnknownExtension = static::$onUnknownExtensionDefault;
         }
-        if (preg_match("/(\.css|\/css\?)/i", $a)) {
+
+        if (preg_match("/(\.css|\/css\?)/i", $a))
+        {
         	// css
         	return self::ADD_TO_CSS;
-        } elseif (preg_match("/\.less/i", $a)) {
-        	// less
-        	return self::ADD_TO_LESS;
-        } elseif (preg_match("/\.js|\/js/i", $a)) {
-        	// js
-        	return self::ADD_TO_JS;
-        } elseif ((self::ON_UNKNOWN_EXTENSION_NONE != $onUnknownExtension)
-        		&& isset(self::$ON_UNKNOWN_EXTENSION_TO_ADD_TO[$onUnknownExtension])) {
-        	return self::$ON_UNKNOWN_EXTENSION_TO_ADD_TO[$onUnknownExtension];
-        }
+
+        } elseif (preg_match("/\.less/i", $a))
+            {
+            	// less
+            	return self::ADD_TO_LESS;
+
+            } elseif (preg_match("/\.js|\/js/i", $a))
+                {
+                	// js
+                	return self::ADD_TO_JS;
+
+                } elseif ( (self::ON_UNKNOWN_EXTENSION_NONE != $onUnknownExtension) && isset(self::$ON_UNKNOWN_EXTENSION_TO_ADD_TO[$onUnknownExtension]) )
+                    {
+                    	return self::$ON_UNKNOWN_EXTENSION_TO_ADD_TO[$onUnknownExtension];
+                    }
+
         return self::ADD_TO_NONE;
     }
+
 
     /**
      * Process add method
@@ -222,18 +254,25 @@ class Asset
     {
         $a = static::generateCacheBusterFilename($a);
 
-        switch (self::getAddTo($a, $onUnknownExtension)) {
+        switch (self::getAddTo($a, $onUnknownExtension))
+        {
         	case self::ADD_TO_CSS:
+
         		static::$css[] = $a;
         		break;
+
         	case self::ADD_TO_LESS:
+
         		static::$less[] = $a;
         		break;
+
         	case self::ADD_TO_JS:
+
         		static::$js[$name][] = $a;
         		break;
         }
     }
+
 
     /**
      * Add new asset as first in its array
@@ -247,23 +286,33 @@ class Asset
     {
         $a = static::generateCacheBusterFilename($a);
 
-        switch (self::getAddTo($a, $onUnknownExtension)) {
+        switch (self::getAddTo($a, $onUnknownExtension))
+        {
         	case self::ADD_TO_CSS:
+
         		array_unshift(static::$css, $a);
         		break;
+
         	case self::ADD_TO_LESS:
+
         		array_unshift(static::$less, $a);
         		break;
+
         	case self::ADD_TO_JS:
-                if (!empty(static::$js[$name])) {
+
+                if (!empty(static::$js[$name]))
+                {
                     array_unshift(static::$js[$name], $a);
-                } else {
-                    static::$js[$name][] = $a;
-                }
+                } else
+                    {
+                        static::$js[$name][] = $a;
+                    }
+
         	    array_unshift(static::$less, $a);
         		break;
         }
     }
+
 
     /**
      * Add new asset before another asset in its array
@@ -278,50 +327,73 @@ class Asset
     {
         $a = static::generateCacheBusterFilename($a);
 
-        switch (self::getAddTo($a, $onUnknownExtension)) {
+        switch (self::getAddTo($a, $onUnknownExtension))
+        {
         	case self::ADD_TO_CSS:
+
                 $bpos = array_search($b, static::$css);
-                if ($bpos === 0) {
+
+                if ($bpos === 0)
+                {
                     static::addFirst($a, $name);
-                } elseif ($bpos >= 1) {
-                    $barr = array_slice(static::$css, $bpos);
-                    $aarr = array_slice(static::$css, 0, $bpos);
-                    array_push($aarr, $a);
-                    static::$css = array_merge($aarr, $barr);
-                } else {
-                    static::$css[] = $a;
-                }
-        		break;
-        	case self::ADD_TO_LESS:
-                $bpos = array_search($b, static::$less);
-                if ($bpos === 0) {
-                    static::addFirst($a, $name);
-                } elseif ($bpos >= 1) {
-                    $barr = array_slice(static::$less, $bpos);
-                    $aarr = array_slice(static::$less, 0, $bpos);
-                    array_push($aarr, $a);
-                    static::$less = array_merge($aarr, $barr);
-                } else {
-                    static::$less[] = $a;
-                }
-        		break;
-        	case self::ADD_TO_JS:
-                if (!empty(static::$js[$name])) {
-                    $bpos = array_search($b, static::$js[$name]);
-                    if ($bpos === 0) {
-                        static::addFirst($a, $name);
-                    } elseif ($bpos >= 1) {
-                        $barr = array_slice(static::$js[$name], $bpos);
-                        $aarr = array_slice(static::$js[$name], 0, $bpos);
+                } elseif ($bpos >= 1)
+                    {
+                        $barr = array_slice(static::$css, $bpos);
+                        $aarr = array_slice(static::$css, 0, $bpos);
                         array_push($aarr, $a);
-                        static::$js[$name] = array_merge($aarr, $barr);
-                    } else {
-                        static::$js[$name][] = $a;
-                    }
+                        static::$css = array_merge($aarr, $barr);
+                    } else
+                        {
+                            static::$css[] = $a;
+                        }
+
+        		break;
+
+        	case self::ADD_TO_LESS:
+
+                $bpos = array_search($b, static::$less);
+
+                if ($bpos === 0)
+                {
+                    static::addFirst($a, $name);
+                } elseif ($bpos >= 1)
+                    {
+                        $barr = array_slice(static::$less, $bpos);
+                        $aarr = array_slice(static::$less, 0, $bpos);
+                        array_push($aarr, $a);
+                        static::$less = array_merge($aarr, $barr);
+                    } else
+                        {
+                            static::$less[] = $a;
+                        }
+
+        		break;
+
+        	case self::ADD_TO_JS:
+
+                if (!empty(static::$js[$name]))
+                {
+                    $bpos = array_search($b, static::$js[$name]);
+
+                    if ($bpos === 0)
+                    {
+                        static::addFirst($a, $name);
+                    } elseif ($bpos >= 1)
+                        {
+                            $barr = array_slice(static::$js[$name], $bpos);
+                            $aarr = array_slice(static::$js[$name], 0, $bpos);
+                            array_push($aarr, $a);
+                            static::$js[$name] = array_merge($aarr, $barr);
+                        } else
+                            {
+                                static::$js[$name][] = $a;
+                            }
                 }
+
                 break;
         }
     }
+
 
     /**
      * Add new asset after another asset in its array
@@ -336,45 +408,64 @@ class Asset
     {
         $a = static::generateCacheBusterFilename($a);
 
-            switch (self::getAddTo($a, $onUnknownExtension)) {
-        	case self::ADD_TO_CSS:
-                $bpos = array_search($b, static::$css);
-                if ($bpos === 0 || $bpos > 0) {
-                    $barr = array_slice(static::$css, $bpos+1);
-                    $aarr = array_slice(static::$css, 0, $bpos+1);
-                    array_push($aarr, $a);
-                    static::$css = array_merge($aarr, $barr);
-                } else {
-                    static::$css[] = $a;
-                }
-        		break;
-        	case self::ADD_TO_LESS:
-                $bpos = array_search($b, static::$less);
-                if ($bpos === 0 || $bpos > 0) {
-                    $barr = array_slice(static::$less, $bpos+1);
-                    $aarr = array_slice(static::$less, 0, $bpos+1);
-                    array_push($aarr, $a);
-                    static::$less = array_merge($aarr, $barr);
-                } else {
-                    static::$less[] = $a;
-                }
-        		break;
-        	case self::ADD_TO_JS:
-                if (!empty(static::$js[$name]))
-                {
-                    $bpos = array_search($b, static::$js[$name]);
-                    if ($bpos === 0 || $bpos > 0) {
-                        $barr = array_slice(static::$js[$name], $bpos+1);
-                        $aarr = array_slice(static::$js[$name], 0, $bpos+1);
+            switch (self::getAddTo($a, $onUnknownExtension))
+            {
+            	case self::ADD_TO_CSS:
+
+                    $bpos = array_search($b, static::$css);
+
+                    if ($bpos === 0 || $bpos > 0)
+                    {
+                        $barr = array_slice(static::$css, $bpos+1);
+                        $aarr = array_slice(static::$css, 0, $bpos+1);
                         array_push($aarr, $a);
-                        static::$js[$name] = array_merge($aarr, $barr);
-                    } else {
-                        static::$js[$name][] = $a;
+                        static::$css = array_merge($aarr, $barr);
+                    } else
+                        {
+                            static::$css[] = $a;
+                        }
+
+            		break;
+
+            	case self::ADD_TO_LESS:
+
+                    $bpos = array_search($b, static::$less);
+
+                    if ($bpos === 0 || $bpos > 0)
+                    {
+                        $barr = array_slice(static::$less, $bpos+1);
+                        $aarr = array_slice(static::$less, 0, $bpos+1);
+                        array_push($aarr, $a);
+                        static::$less = array_merge($aarr, $barr);
+                    } else
+                        {
+                            static::$less[] = $a;
+                        }
+
+            		break;
+
+            	case self::ADD_TO_JS:
+
+                    if (!empty(static::$js[$name]))
+                    {
+                        $bpos = array_search($b, static::$js[$name]);
+
+                        if ($bpos === 0 || $bpos > 0)
+                        {
+                            $barr = array_slice(static::$js[$name], $bpos+1);
+                            $aarr = array_slice(static::$js[$name], 0, $bpos+1);
+                            array_push($aarr, $a);
+                            static::$js[$name] = array_merge($aarr, $barr);
+                        } else
+                            {
+                                static::$js[$name][] = $a;
+                            }
                     }
-                }
-                break;
+
+                    break;
         }
     }
+
 
     /**
      * Add new script
@@ -412,14 +503,19 @@ class Asset
 	 */
 	protected static function url($file)
 	{
-        if (preg_match('/(https?:)?\/\//i', $file)) {
+        if (preg_match('/(https?:)?\/\//i', $file))
+        {
             return $file;
         }
-        if (static::$domain == '/') {
+
+        if (static::$domain == '/' && static::$environment != 'testing')
+        {
             return asset($file);
         }
+
         return rtrim(static::$domain, '/') .'/' . ltrim($file, '/');
 	}
+
 
 	/**
      * Loads all items from $css array not wrapped in <link> tags
@@ -432,12 +528,15 @@ class Asset
     {
         static::checkEnv();
 
-        if (!empty(static::$css)) {
-            foreach(static::$css as $file) {
+        if (!empty(static::$css))
+        {
+            foreach(static::$css as $file)
+            {
                 echo static::$prefix, self::url($file), $separator;
             }
         }
     }
+
 
     /**
      * Loads all items from $css array
@@ -448,12 +547,15 @@ class Asset
     {
         static::checkEnv();
 
-        if (!empty(static::$css)) {
-            foreach(static::$css as $file) {
+        if (!empty(static::$css))
+        {
+            foreach(static::$css as $file)
+            {
                 echo static::$prefix, '<link rel="stylesheet" type="text/css" href="', self::url($file), "\" />\n";
             }
         }
     }
+
 
     /**
      * Loads all items from $less array not wrapped in <link> tags
@@ -466,12 +568,15 @@ class Asset
     {
         static::checkEnv();
 
-        if (!empty(static::$less)) {
-            foreach(static::$less as $file) {
+        if (!empty(static::$less))
+        {
+            foreach(static::$less as $file)
+            {
                 echo static::$prefix, self::url($file), $separator;
             }
         }
     }
+
 
     /**
      * Loads all items from $less array
@@ -482,8 +587,10 @@ class Asset
     {
         static::checkEnv();
 
-        if (!empty(static::$less)) {
-            foreach(static::$less as $file) {
+        if (!empty(static::$less))
+        {
+            foreach(static::$less as $file)
+            {
                 echo static::$prefix, '<link rel="stylesheet/less" type="text/css" href="', self::url($file), "\" />\n";
             }
         }
@@ -499,20 +606,28 @@ class Asset
     */
     public static function styles($name = 'header')
     {
-        if (($name !== '') && (!empty(static::$styles[$name]))) {
+        if (($name !== '') && (!empty(static::$styles[$name])))
+        {
             echo "\n", static::$prefix, "<style type=\"text/css\">\n", static::$prefix;
+
             foreach(static::$styles[$name] as $style)
             {
                 echo "$style\n", static::$prefix;
             }
+
             echo static::$prefix, "</style>\n";
-        } else if (!empty(static::$styles)) {
-            echo static::$prefix, "<style type=\"text/css\">\n";
-            foreach(static::$styles as $style) {
-                echo "$style\n";
+
+        } elseif (!empty(static::$styles))
+            {
+                echo static::$prefix, "<style type=\"text/css\">\n";
+
+                foreach(static::$styles as $style)
+                {
+                    echo "$style\n";
+                }
+
+                echo "</style>\n";
             }
-            echo "</style>\n";
-        }
     }
 
 
@@ -528,12 +643,15 @@ class Asset
     {
         static::checkEnv();
 
-        if (!empty(static::$js[$name])) {
-            foreach(static::$js[$name] as $file) {
+        if (!empty(static::$js[$name]))
+        {
+            foreach(static::$js[$name] as $file)
+            {
                 echo static::$prefix, self::url($file), $separator;
             }
         }
     }
+
 
     /**
      * Loads items from $js array
@@ -548,15 +666,20 @@ class Asset
     {
         static::checkEnv();
 
-        if ($name === false) {
+        if ($name === false)
+        {
             $name = 'footer';
         }
-        if (!empty(static::$js[$name])) {
-            foreach(static::$js[$name] as $file) {
+
+        if (!empty(static::$js[$name]))
+        {
+            foreach(static::$js[$name] as $file)
+            {
                 echo static::$prefix, '<script src="', self::url($file), "\"></script>\n";
             }
         }
     }
+
 
     /**
      * Loads items from $scripts array
@@ -567,20 +690,30 @@ class Asset
     */
     public static function scripts($name = 'footer')
     {
-        if ($name == 'ready') {
-            if (!empty(static::$scripts['ready'])) {
+        if ($name == 'ready')
+        {
+            if (!empty(static::$scripts['ready']))
+            {
                 echo static::$prefix, '<script>', (static::$useShortHandReady ? '$(' : '$(document).ready('), "function(){\n";
-                foreach(static::$scripts['ready'] as $script) {
+
+                foreach(static::$scripts['ready'] as $script)
+                {
                     echo "$script\n", static::$prefix;
                 }
+
                 echo "});</script>\n";
             }
-        } else {
-            if (!empty(static::$scripts[$name])) {
-                foreach(static::$scripts[$name] as $script) {
-                    echo static::$prefix, "<script>\n$script\n</script>\n";
+        } else
+            {
+                if (!empty(static::$scripts[$name]))
+                {
+                    foreach(static::$scripts[$name] as $script)
+                    {
+                        echo static::$prefix, "<script>\n$script\n</script>\n";
+                    }
                 }
             }
-        }
     }
+
+
 }

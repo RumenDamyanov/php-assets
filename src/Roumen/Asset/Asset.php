@@ -35,7 +35,7 @@ class Asset
     public static $scripts = array();
     public static $domain = '/';
     public static $prefix = '';
-    public static $hash = null;
+    public static $hash = array();
     public static $environment = null;
     protected static $cacheBusterGeneratorFunction = null;
     private static $useShortHandReady = false;
@@ -102,22 +102,22 @@ class Asset
     {
         if (file_exists($cachebuster))
         {
-            static::$hash = json_decode(file_get_contents($cachebuster));
+            static::$hash = json_decode(file_get_contents($cachebuster), true);
         }
     }
 
 
     /**
-     * Set cache buster filename
+     * Set cache buster function
      *
-     * @param Closure $fn
+     * @param Callable $fn
      *
-     * Closure must accepts ONE argument {String}
-     * and return a {String}
+     * Callable must accepts ONE argument {String} (filename)
+     * and return a {String} (hash without filename and "?")
      *
      * @return void
     */
-    private static function setCacheBusterGeneratorFunction(\Closure $fn)
+    public static function setCacheBusterGeneratorFunction($fn)
     {
         static::$cacheBusterGeneratorFunction = $fn;
     }
@@ -133,13 +133,21 @@ class Asset
     */
     private static function generateCacheBusterFilename($a)
     {
-        if(!static::$cacheBusterGeneratorFunction instanceof \Closure)
+        $hash = '';
+        if(!is_callable(static::$cacheBusterGeneratorFunction))
         {
-            return (static::$hash && property_exists(static::$hash, $a)) ? static::$hash->{$a} : $a;
+            if(is_array(static::$hash) && array_key_exists($a, static::$hash)) {
+                $hash .= static::$hash[$a];
+            }
         } else
             {
-                return static::$cacheBusterGeneratorFunction($a);
+                $hash = call_user_func_array(static::$cacheBusterGeneratorFunction, array($a));
             }
+
+        if(is_string($hash) && $hash !== '') {
+            $a .= '?' . $hash;
+        }
+        return $a;
     }
 
 
@@ -252,8 +260,6 @@ class Asset
     */
     protected static function processAdd($a, $name, $onUnknownExtension = false)
     {
-        $a = static::generateCacheBusterFilename($a);
-
         switch (self::getAddTo($a, $onUnknownExtension))
         {
         	case self::ADD_TO_CSS:
@@ -284,8 +290,6 @@ class Asset
     */
     public static function addFirst($a, $name = 'footer', $onUnknownExtension = false)
     {
-        $a = static::generateCacheBusterFilename($a);
-
         switch (self::getAddTo($a, $onUnknownExtension))
         {
         	case self::ADD_TO_CSS:
@@ -325,8 +329,6 @@ class Asset
     */
     public static function addBefore($a, $b, $name = 'footer', $onUnknownExtension = false)
     {
-        $a = static::generateCacheBusterFilename($a);
-
         switch (self::getAddTo($a, $onUnknownExtension))
         {
         	case self::ADD_TO_CSS:
@@ -406,8 +408,6 @@ class Asset
     */
     public static function addAfter($a, $b, $name = 'footer', $onUnknownExtension = false)
     {
-        $a = static::generateCacheBusterFilename($a);
-
             switch (self::getAddTo($a, $onUnknownExtension))
             {
             	case self::ADD_TO_CSS:
@@ -507,6 +507,8 @@ class Asset
         {
             return $file;
         }
+
+        $file = static::generateCacheBusterFilename($file);
 
         if (static::$domain == '/' && static::$environment != 'testing')
         {

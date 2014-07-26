@@ -246,4 +246,50 @@ class AssetTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/', Asset::$domain);
     }
 
+    public function testCachebusterFile()
+    {
+        Asset::$js = array();
+        Asset::$css = array();
+        Asset::$hash = array();
+
+        Asset::setCachebuster('tests/cache.json');
+        $this->assertEquals(
+            Asset::$hash,
+            array(
+                '1.js' => '27f771f4d8aeea4878c2b5ac39a2031f',
+                '3.js' => '82f0e3247f8516bd91abcdbed83c71c0',
+                '2.css' => '42b98f2980dc1366cf1d2677d4891eda',
+            )
+        );
+
+        Asset::add(array('1.js','2.js','3.js'));
+        Asset::add(array('1.css','2.css','3.css'));
+
+        $this->expectOutputString('/1.js?27f771f4d8aeea4878c2b5ac39a2031f,/2.js,/3.js?82f0e3247f8516bd91abcdbed83c71c0,/1.css,/2.css?42b98f2980dc1366cf1d2677d4891eda,/3.css,', Asset::jsRaw(','), Asset::cssRaw(','));
+    }
+
+    public function testCachebusterFunction()
+    {
+        Asset::$js = array();
+        Asset::$css = array();
+
+        function _hash($name)
+        {
+            if($name == '1.js') {
+                return '';
+            }
+            if($name == '2.css') {
+                return null;
+            }
+            return substr($name, 0, 1);
+        }
+
+        Asset::setCacheBusterGeneratorFunction('_hash');
+
+        Asset::add(array('1.js','2.js','3.js'));
+        Asset::add(array('1.css','2.css','3.css'));
+
+        $this->expectOutputString('/1.js,/2.js?2,/3.js?3,/1.css?1,/2.css,/3.css?3,', Asset::jsRaw(','), Asset::cssRaw(','));
+    }
+
 }

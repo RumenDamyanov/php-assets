@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.4.0
+ * @version 2.4.2
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -24,9 +24,11 @@ class Asset
     const ON_UNKNOWN_EXTENSION_CSS                   = 1;
     const ON_UNKNOWN_EXTENSION_LESS                  = 2;
     const ON_UNKNOWN_EXTENSION_JS                    = 3;
-    private static $ON_UNKNOWN_EXTENSION_TO_ADD_TO   = array(Asset::ON_UNKNOWN_EXTENSION_NONE    => Asset::ADD_TO_CSS,
-                                                             Asset::ON_UNKNOWN_EXTENSION_LESS    => Asset::ADD_TO_LESS,
-                                                             Asset::ON_UNKNOWN_EXTENSION_JS      => Asset::ADD_TO_JS);
+    private static $ON_UNKNOWN_EXTENSION_TO_ADD_TO   = array(
+                                                            Asset::ON_UNKNOWN_EXTENSION_NONE    => Asset::ADD_TO_CSS,
+                                                            Asset::ON_UNKNOWN_EXTENSION_LESS    => Asset::ADD_TO_LESS,
+                                                            Asset::ON_UNKNOWN_EXTENSION_JS      => Asset::ADD_TO_JS
+                                                        );
 
     public static $css = array();
     public static $less = array();
@@ -37,6 +39,7 @@ class Asset
     public static $prefix = '';
     public static $hash = array();
     public static $environment = null;
+    public static $secure = false;
     protected static $cacheBusterGeneratorFunction = null;
     private static $useShortHandReady = false;
     private static $onUnknownExtensionDefault = Asset::ON_UNKNOWN_EXTENSION_NONE;
@@ -512,7 +515,7 @@ class Asset
 
         if (static::$domain == '/' && static::$environment != 'testing')
         {
-            return asset($file);
+            return asset($file, static::$secure);
         }
 
         return rtrim(static::$domain, '/') .'/' . ltrim($file, '/');

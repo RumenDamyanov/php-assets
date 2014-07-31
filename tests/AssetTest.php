@@ -246,6 +246,13 @@ class AssetTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/', Asset::$domain);
     }
 
+    public function testSecure()
+    {
+        Asset::$secure = true;
+
+        $this->assertEquals(true, Asset::$secure);
+    }
+
     public function testCachebusterFile()
     {
         Asset::$js = array();
@@ -253,13 +260,12 @@ class AssetTest extends PHPUnit_Framework_TestCase
         Asset::$hash = array();
 
         Asset::setCachebuster('tests/cache.json');
-        $this->assertEquals(
-            Asset::$hash,
-            array(
-                '1.js' => '27f771f4d8aeea4878c2b5ac39a2031f',
-                '3.js' => '82f0e3247f8516bd91abcdbed83c71c0',
-                '2.css' => '42b98f2980dc1366cf1d2677d4891eda',
-            )
+
+        $this->assertEquals(Asset::$hash, array(
+                                                '1.js' => '27f771f4d8aeea4878c2b5ac39a2031f',
+                                                '3.js' => '82f0e3247f8516bd91abcdbed83c71c0',
+                                                '2.css' => '42b98f2980dc1366cf1d2677d4891eda'
+                                            )
         );
 
         Asset::add(array('1.js','2.js','3.js'));

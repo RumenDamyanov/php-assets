@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.4.2
+ * @version 2.4.3
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -170,18 +170,18 @@ class Asset
     /**
      * Indicate what to do by default if an unknown extension is found.
      *
-     * @param int (self::ON_UNKNOWN_EXTENSION_NONE,
-     *             self::ON_UNKNOWN_EXTENSION_JS) $onUnknownExtensionDefault
+     * @param int (static::ON_UNKNOWN_EXTENSION_NONE,
+     *             static::ON_UNKNOWN_EXTENSION_JS) $onUnknownExtensionDefault
      *
      * @return void
     */
     public static function setOnUnknownExtensionDefault($onUnknownExtensionDefault)
     {
         if ((!is_int($onUnknownExtensionDefault))
-            || ($onUnknownExtensionDefault < self::ON_UNKNOWN_EXTENSION_NONE)
-            || ($onUnknownExtensionDefault > self::ON_UNKNOWN_EXTENSION_JS))
+            || ($onUnknownExtensionDefault < static::ON_UNKNOWN_EXTENSION_NONE)
+            || ($onUnknownExtensionDefault > static::ON_UNKNOWN_EXTENSION_JS))
         {
-            $onUnknownExtensionDefault = self::ON_UNKNOWN_EXTENSION_NONE;
+            $onUnknownExtensionDefault = static::ON_UNKNOWN_EXTENSION_NONE;
         }
 
         static::$onUnknownExtensionDefault = $onUnknownExtensionDefault;
@@ -193,8 +193,8 @@ class Asset
      *
      * @param string $a
      * @param string $name
-     * @param int (self::ON_UNKNOWN_EXTENSION_NONE,
-     *             self::ON_UNKNOWN_EXTENSION_JS) $onUnknownExtension
+     * @param int (static::ON_UNKNOWN_EXTENSION_NONE,
+     *             static::ON_UNKNOWN_EXTENSION_JS) $onUnknownExtension
      *
      * @return void
     */
@@ -217,10 +217,10 @@ class Asset
      * Identify where to add an asset:
      *
      * @param string $a
-     * @param int (self::ON_UNKNOWN_EXTENSION_NONE,
-     *             self::ON_UNKNOWN_EXTENSION_JS)/boolean $onUnknownExtension
+     * @param int (static::ON_UNKNOWN_EXTENSION_NONE,
+     *             static::ON_UNKNOWN_EXTENSION_JS)/boolean $onUnknownExtension
      *
-     * @return int (self::ADD_TO_NONE, self::ADD_TO_JS)
+     * @return int (static::ADD_TO_NONE, static::ADD_TO_JS)
     */
     private static function getAddTo($a, $onUnknownExtension = false)
     {
@@ -232,24 +232,24 @@ class Asset
         if (preg_match("/(\.css|\/css\?)/i", $a))
         {
         	// css
-        	return self::ADD_TO_CSS;
+        	return static::ADD_TO_CSS;
 
         } elseif (preg_match("/\.less/i", $a))
             {
             	// less
-            	return self::ADD_TO_LESS;
+            	return static::ADD_TO_LESS;
 
             } elseif (preg_match("/\.js|\/js/i", $a))
                 {
                 	// js
-                	return self::ADD_TO_JS;
+                	return static::ADD_TO_JS;
 
-                } elseif ( (self::ON_UNKNOWN_EXTENSION_NONE != $onUnknownExtension) && isset(self::$ON_UNKNOWN_EXTENSION_TO_ADD_TO[$onUnknownExtension]) )
+                } elseif ( (static::ON_UNKNOWN_EXTENSION_NONE != $onUnknownExtension) && isset(static::$ON_UNKNOWN_EXTENSION_TO_ADD_TO[$onUnknownExtension]) )
                     {
-                    	return self::$ON_UNKNOWN_EXTENSION_TO_ADD_TO[$onUnknownExtension];
+                    	return static::$ON_UNKNOWN_EXTENSION_TO_ADD_TO[$onUnknownExtension];
                     }
 
-        return self::ADD_TO_NONE;
+        return static::ADD_TO_NONE;
     }
 
 
@@ -263,19 +263,19 @@ class Asset
     */
     protected static function processAdd($a, $name, $onUnknownExtension = false)
     {
-        switch (self::getAddTo($a, $onUnknownExtension))
+        switch (static::getAddTo($a, $onUnknownExtension))
         {
-        	case self::ADD_TO_CSS:
+        	case static::ADD_TO_CSS:
 
         		static::$css[] = $a;
         		break;
 
-        	case self::ADD_TO_LESS:
+        	case static::ADD_TO_LESS:
 
         		static::$less[] = $a;
         		break;
 
-        	case self::ADD_TO_JS:
+        	case static::ADD_TO_JS:
 
         		static::$js[$name][] = $a;
         		break;
@@ -293,19 +293,19 @@ class Asset
     */
     public static function addFirst($a, $name = 'footer', $onUnknownExtension = false)
     {
-        switch (self::getAddTo($a, $onUnknownExtension))
+        switch (static::getAddTo($a, $onUnknownExtension))
         {
-        	case self::ADD_TO_CSS:
+        	case static::ADD_TO_CSS:
 
         		array_unshift(static::$css, $a);
         		break;
 
-        	case self::ADD_TO_LESS:
+        	case static::ADD_TO_LESS:
 
         		array_unshift(static::$less, $a);
         		break;
 
-        	case self::ADD_TO_JS:
+        	case static::ADD_TO_JS:
 
                 if (!empty(static::$js[$name]))
                 {
@@ -332,9 +332,9 @@ class Asset
     */
     public static function addBefore($a, $b, $name = 'footer', $onUnknownExtension = false)
     {
-        switch (self::getAddTo($a, $onUnknownExtension))
+        switch (static::getAddTo($a, $onUnknownExtension))
         {
-        	case self::ADD_TO_CSS:
+        	case static::ADD_TO_CSS:
 
                 $bpos = array_search($b, static::$css);
 
@@ -354,7 +354,7 @@ class Asset
 
         		break;
 
-        	case self::ADD_TO_LESS:
+        	case static::ADD_TO_LESS:
 
                 $bpos = array_search($b, static::$less);
 
@@ -374,7 +374,7 @@ class Asset
 
         		break;
 
-        	case self::ADD_TO_JS:
+        	case static::ADD_TO_JS:
 
                 if (!empty(static::$js[$name]))
                 {
@@ -411,9 +411,9 @@ class Asset
     */
     public static function addAfter($a, $b, $name = 'footer', $onUnknownExtension = false)
     {
-            switch (self::getAddTo($a, $onUnknownExtension))
+            switch (static::getAddTo($a, $onUnknownExtension))
             {
-            	case self::ADD_TO_CSS:
+            	case static::ADD_TO_CSS:
 
                     $bpos = array_search($b, static::$css);
 
@@ -430,7 +430,7 @@ class Asset
 
             		break;
 
-            	case self::ADD_TO_LESS:
+            	case static::ADD_TO_LESS:
 
                     $bpos = array_search($b, static::$less);
 
@@ -447,7 +447,7 @@ class Asset
 
             		break;
 
-            	case self::ADD_TO_JS:
+            	case static::ADD_TO_JS:
 
                     if (!empty(static::$js[$name]))
                     {
@@ -537,7 +537,7 @@ class Asset
         {
             foreach(static::$css as $file)
             {
-                echo static::$prefix, self::url($file), $separator;
+                echo static::$prefix, static::url($file), $separator;
             }
         }
     }
@@ -556,7 +556,7 @@ class Asset
         {
             foreach(static::$css as $file)
             {
-                echo static::$prefix, '<link rel="stylesheet" type="text/css" href="', self::url($file), "\" />\n";
+                echo static::$prefix, '<link rel="stylesheet" type="text/css" href="', static::url($file), "\" />\n";
             }
         }
     }
@@ -577,7 +577,7 @@ class Asset
         {
             foreach(static::$less as $file)
             {
-                echo static::$prefix, self::url($file), $separator;
+                echo static::$prefix, static::url($file), $separator;
             }
         }
     }
@@ -596,7 +596,7 @@ class Asset
         {
             foreach(static::$less as $file)
             {
-                echo static::$prefix, '<link rel="stylesheet/less" type="text/css" href="', self::url($file), "\" />\n";
+                echo static::$prefix, '<link rel="stylesheet/less" type="text/css" href="', static::url($file), "\" />\n";
             }
         }
     }
@@ -652,7 +652,7 @@ class Asset
         {
             foreach(static::$js[$name] as $file)
             {
-                echo static::$prefix, self::url($file), $separator;
+                echo static::$prefix, static::url($file), $separator;
             }
         }
     }
@@ -680,7 +680,7 @@ class Asset
         {
             foreach(static::$js[$name] as $file)
             {
-                echo static::$prefix, '<script src="', self::url($file), "\"></script>\n";
+                echo static::$prefix, '<script src="', static::url($file), "\"></script>\n";
             }
         }
     }

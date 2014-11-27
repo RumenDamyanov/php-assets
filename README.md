@@ -7,10 +7,17 @@ A simple assets manager for Laravel 4.
 
 ## Installation
 
-Add the following to your `composer.json` file :
+Run the following command and provide the latest stable version (e.g v2.4.3) :
+
+```bash
+composer require roumen/asset
+```
+
+or add the following to your `composer.json` file :
 
 ```json
-"roumen/asset": "dev-master"
+"roumen/asset": "~2.4"
+```
 ```
 
 Then register this service provider with Laravel :

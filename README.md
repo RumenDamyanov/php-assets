@@ -18,7 +18,6 @@ or add the following to your `composer.json` file :
 ```json
 "roumen/asset": "~2.4"
 ```
-```
 
 Then register this service provider with Laravel :
 

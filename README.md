@@ -2,12 +2,17 @@
 
 [![Latest Stable Version](https://poser.pugx.org/roumen/asset/version.png)](https://packagist.org/packages/roumen/asset) [![Total Downloads](https://poser.pugx.org/roumen/asset/d/total.png)](https://packagist.org/packages/roumen/asset) [![Build Status](https://travis-ci.org/RoumenDamianoff/laravel-assets.png?branch=master)](https://travis-ci.org/RoumenDamianoff/laravel-assets) [![License](https://poser.pugx.org/roumen/asset/license.png)](https://packagist.org/packages/roumen/asset)
 
-A simple assets manager for Laravel 4.
+A simple assets manager for Laravel 5.
 
+## Notes
+
+Latest supported version for Laravel 4 is ~2.4 (e.g v2.4.15)
+
+Branch dev-master is for development and is unstable
 
 ## Installation
 
-Run the following command and provide the latest stable version (e.g v2.4.3) :
+Run the following command and provide the latest stable version (e.g v2.5.1) :
 
 ```bash
 composer require roumen/asset
@@ -16,7 +21,7 @@ composer require roumen/asset
 or add the following to your `composer.json` file :
 
 ```json
-"roumen/asset": "~2.4"
+"roumen/asset": "~2.5"
 ```
 
 Then register this service provider with Laravel :

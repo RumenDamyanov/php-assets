@@ -18,7 +18,7 @@ class AssetServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        $this->package('roumen/asset');
+        //
     }
 
     /**
@@ -42,7 +42,7 @@ class AssetServiceProvider extends ServiceProvider {
      */
     public function provides()
     {
-        return array();
+        return ['asset'];
     }
 
 }

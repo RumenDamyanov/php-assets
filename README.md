@@ -6,7 +6,7 @@ A simple assets manager for Laravel 5.
 
 ## Notes
 
-Latest supported version for Laravel 4 is ~2.4 (e.g v2.4.3)
+Latest supported version for Laravel 4 is 2.4.* (e.g v2.4.3)
 
 Branch dev-master is for development and is unstable
 
@@ -21,7 +21,7 @@ composer require roumen/asset
 or add the following to your `composer.json` file :
 
 ```json
-"roumen/asset": "~2.5"
+"roumen/asset": "2.5.*"
 ```
 
 Then register this service provider with Laravel :

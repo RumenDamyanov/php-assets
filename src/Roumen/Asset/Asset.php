@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.5.2
+ * @version 2.5.3
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -34,6 +34,7 @@ class Asset
     public static $less = [];
     public static $styles = [];
     public static $js = [];
+    public static $jsParams = [];
     public static $scripts = [];
     public static $domain = '/';
     public static $prefix = '';
@@ -192,23 +193,23 @@ class Asset
      * Add new asset
      *
      * @param string $a
-     * @param string $name
+     * @param string/array $params
      * @param int (static::ON_UNKNOWN_EXTENSION_NONE,
      *             static::ON_UNKNOWN_EXTENSION_JS) $onUnknownExtension
      *
      * @return void
     */
-    public static function add($a, $name = 'footer', $onUnknownExtension = false)
+    public static function add($a, $params = 'footer', $onUnknownExtension = false)
     {
         if (is_array($a))
         {
             foreach ($a as $item)
             {
-                static::processAdd($item, $name, $onUnknownExtension);
+                static::processAdd($item, $params, $onUnknownExtension);
             }
         } else
             {
-                static::processAdd($a, $name, $onUnknownExtension);
+                static::processAdd($a, $params, $onUnknownExtension);
             }
     }
 
@@ -257,11 +258,11 @@ class Asset
      * Process add method
      *
      * @param string $a
-     * @param string $name
+     * @param string/array $params
      *
      * @return void
     */
-    protected static function processAdd($a, $name, $onUnknownExtension = false)
+    protected static function processAdd($a, $params, $onUnknownExtension = false)
     {
         switch (static::getAddTo($a, $onUnknownExtension))
         {
@@ -277,6 +278,16 @@ class Asset
 
         	case static::ADD_TO_JS:
 
+                if (is_array($params) && !empty($params['name']))
+                {
+                    $name = $params['name'];
+                    static::$jsParams[$name][$a] = $params;
+                }
+                else
+                {
+                    $name = $params;
+                }
+
         		static::$js[$name][$a] = $a;
         		break;
         }
@@ -287,11 +298,11 @@ class Asset
      * Add new asset as first in its array
      *
      * @param string $a
-     * @param string $name
+     * @param string/array $params
      *
      * @return void
     */
-    public static function addFirst($a, $name = 'footer', $onUnknownExtension = false)
+    public static function addFirst($a, $params = 'footer', $onUnknownExtension = false)
     {
         switch (static::getAddTo($a, $onUnknownExtension))
         {
@@ -306,6 +317,16 @@ class Asset
         		break;
 
         	case static::ADD_TO_JS:
+
+                if (is_array($params) && !empty($params['name']))
+                {
+                    $name = $params['name'];
+                    static::$jsParams[$name][$a] = $params;
+                }
+                else
+                {
+                    $name = $params;
+                }
 
                 if (!empty(static::$js[$name]))
                 {
@@ -325,11 +346,11 @@ class Asset
      *
      * @param string $a
      * @param string $b
-     * @param string $name
+     * @param string/array $params
      *
      * @return void
     */
-    public static function addBefore($a, $b, $name = 'footer', $onUnknownExtension = false)
+    public static function addBefore($a, $b, $params = 'footer', $onUnknownExtension = false)
     {
         switch (static::getAddTo($a, $onUnknownExtension))
         {
@@ -379,6 +400,16 @@ class Asset
 
         	case static::ADD_TO_JS:
 
+                if (is_array($params) && !empty($params['name']))
+                {
+                    $name = $params['name'];
+                    static::$jsParams[$name][$a] = $params;
+                }
+                else
+                {
+                    $name = $params;
+                }
+
                 if (!empty(static::$js[$name]))
                 {
                     $bpos = array_search($b, array_keys(static::$js[$name]));
@@ -410,11 +441,11 @@ class Asset
      *
      * @param string $a
      * @param string $b
-     * @param string $name
+     * @param string/array $params
      *
      * @return void
     */
-    public static function addAfter($a, $b, $name = 'footer', $onUnknownExtension = false)
+    public static function addAfter($a, $b, $params = 'footer', $onUnknownExtension = false)
     {
             switch (static::getAddTo($a, $onUnknownExtension))
             {
@@ -455,6 +486,16 @@ class Asset
             		break;
 
             	case static::ADD_TO_JS:
+
+                    if (is_array($params) && !empty($params['name']))
+                    {
+                        $name = $params['name'];
+                        static::$jsParams[$name][$a] = $params;
+                    }
+                    else
+                    {
+                        $name = $params;
+                    }
 
                     if (!empty(static::$js[$name]))
                     {
@@ -670,8 +711,6 @@ class Asset
      * Loads items from $js array
      *
      * @param string $name
-     * @param boolean $tags
-     * @param string $join
      *
      * @return void
     */
@@ -679,16 +718,29 @@ class Asset
     {
         static::checkEnv();
 
-        if ($name === false)
-        {
-            $name = 'footer';
-        }
+        $type = '';
+        $defer = '';
+        $async = '';
 
         if (!empty(static::$js[$name]))
         {
             foreach(static::$js[$name] as $file)
             {
-                echo static::$prefix, '<script src="', static::url($file), "\"></script>\n";
+                if (!empty(static::$jsParams[$name][$file]))
+                {
+                    if (!empty(static::$jsParams[$name][$file]['type'])) $type = static::$jsParams[$name][$file]['type'];
+                    if (!empty(static::$jsParams[$name][$file]['defer'])) $defer = static::$jsParams[$name][$file]['defer'];
+                    if (!empty(static::$jsParams[$name][$file]['async'])) $async = static::$jsParams[$name][$file]['async'];
+                }
+
+                $e  = static::$prefix;
+                $e .= '<script src="'.static::url($file).'"';
+                if ($type != '') $e .= ' type="'.$type.'"';
+                if ($defer != '') $e .= ' defer="'.$defer.'"';
+                if ($async != '') $e .= ' async="'.$async.'"';
+                $e .= '></script>'."\n";
+
+                echo $e;
             }
         }
     }

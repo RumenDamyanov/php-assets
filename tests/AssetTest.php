@@ -18,11 +18,13 @@ class AssetTest extends PHPUnit_Framework_TestCase
         Asset::add('style.less');
         Asset::add('script.js');
         Asset::add('script.js','foobar');
+        Asset::add('scriptWithParams.js',['name'=>'footer2', 'type'=>'text/jsx', 'async' => 'true', 'defer'=>'true']);
 
         $this->assertEquals('style.css', Asset::$css['style.css']);
         $this->assertEquals('style.less', Asset::$less['style.less']);
         $this->assertEquals('script.js', Asset::$js['footer']['script.js']);
         $this->assertEquals('script.js', Asset::$js['foobar']['script.js']);
+        $this->assertEquals('scriptWithParams.js', Asset::$js['footer2']['scriptWithParams.js']);
 
     }
 
@@ -79,11 +81,14 @@ class AssetTest extends PHPUnit_Framework_TestCase
 
         Asset::add('script3.js','foobar');
         Asset::addFirst('scriptFirst.js','foobar');
+        Asset::addFirst('scriptFirst2.js',['name'=>'foobar','type'=>'text/jsx','async'=>'true','defer'=>'false']);
 
         $keys = array_keys(Asset::$js['foobar']);
 
-        $this->assertEquals('scriptFirst.js', Asset::$js['foobar'][$keys[0]]);
-        $this->assertEquals('script3.js', Asset::$js['foobar'][$keys[1]]);
+        $this->assertEquals('scriptFirst2.js', Asset::$js['foobar'][$keys[0]]);
+        $this->assertEquals('scriptFirst.js', Asset::$js['foobar'][$keys[1]]);
+        $this->assertEquals('script3.js', Asset::$js['foobar'][$keys[2]]);
+        $this->assertEquals(['name'=>'foobar','type'=>'text/jsx','async'=>'true','defer'=>'false'], Asset::$jsParams['foobar']['scriptFirst2.js']);
 
     }
 
@@ -121,12 +126,14 @@ class AssetTest extends PHPUnit_Framework_TestCase
 
         Asset::add(['1.js','2.js','3.js'],'foobar');
         Asset::addBefore('before2.js','2.js', 'foobar');
+        Asset::addBefore('before3.js','3.js',['name'=>'foobar','type'=>'text/jsx','async'=>'true','defer'=>'false']);
 
         $keys = array_keys(Asset::$js['foobar']);
 
         $this->assertEquals('before2.js', Asset::$js['foobar'][$keys[1]]);
         $this->assertEquals('2.js', Asset::$js['foobar'][$keys[2]]);
-
+        $this->assertEquals('before3.js', Asset::$js['foobar'][$keys[3]]);
+        $this->assertEquals(['name'=>'foobar','type'=>'text/jsx','async'=>'true','defer'=>'false'], Asset::$jsParams['foobar']['before3.js']);
     }
 
     public function testAddAfter()
@@ -161,11 +168,15 @@ class AssetTest extends PHPUnit_Framework_TestCase
 
         Asset::add(['1.js','2.js','3.js'],'foobar');
         Asset::addAfter('after2.js','2.js', 'foobar');
+        Asset::addAfter('after1.js','1.js',['name'=>'foobar','type'=>'text/jsx','async'=>'true','defer'=>'false']);
 
         $keys = array_keys(Asset::$js['foobar']);
 
-        $this->assertEquals('after2.js', Asset::$js['foobar'][$keys[2]]);
-        $this->assertEquals('2.js', Asset::$js['foobar'][$keys[1]]);
+        $this->assertEquals('after2.js', Asset::$js['foobar'][$keys[3]]);
+        $this->assertEquals('2.js', Asset::$js['foobar'][$keys[2]]);
+        $this->assertEquals('after1.js', Asset::$js['foobar'][$keys[1]]);
+
+        $this->assertEquals(['name'=>'foobar','type'=>'text/jsx','async'=>'true','defer'=>'false'], Asset::$jsParams['foobar']['after1.js']);
     }
 
     public function testCssGoogleFonts()
@@ -248,8 +259,11 @@ class AssetTest extends PHPUnit_Framework_TestCase
     {
         Asset::$js = [];
         Asset::add(['1.js','http://foo.dev/2.js'], 'footer');
+        Asset::add('scriptWithParams.js',['name'=>'footer', 'type'=>'text/jsx', 'async' => 'true', 'defer'=>'true']);
 
-        $expected = '<script src="/1.js"></script>'."\n".'<script src="http://foo.dev/2.js"></script>'."\n";
+
+        $expected  = '<script src="/1.js"></script>'."\n".'<script src="http://foo.dev/2.js"></script>'."\n";
+        $expected .= '<script src="/scriptWithParams.js" type="text/jsx" defer="true" async="true"></script>'."\n";
 
         $this->expectOutputString($expected, Asset::js('footer'));
     }

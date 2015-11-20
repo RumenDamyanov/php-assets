@@ -4,7 +4,7 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.5.1
+ * @version 2.5.2
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
@@ -24,20 +24,20 @@ class Asset
     const ON_UNKNOWN_EXTENSION_CSS                   = 1;
     const ON_UNKNOWN_EXTENSION_LESS                  = 2;
     const ON_UNKNOWN_EXTENSION_JS                    = 3;
-    private static $ON_UNKNOWN_EXTENSION_TO_ADD_TO   = array(
+    private static $ON_UNKNOWN_EXTENSION_TO_ADD_TO   = [
                                                             Asset::ON_UNKNOWN_EXTENSION_NONE    => Asset::ADD_TO_CSS,
                                                             Asset::ON_UNKNOWN_EXTENSION_LESS    => Asset::ADD_TO_LESS,
                                                             Asset::ON_UNKNOWN_EXTENSION_JS      => Asset::ADD_TO_JS
-                                                        );
+                                                        ];
 
-    public static $css = array();
-    public static $less = array();
-    public static $styles = array();
-    public static $js = array();
-    public static $scripts = array();
+    public static $css = [];
+    public static $less = [];
+    public static $styles = [];
+    public static $js = [];
+    public static $scripts = [];
     public static $domain = '/';
     public static $prefix = '';
-    public static $hash = array();
+    public static $hash = [];
     public static $environment = null;
     public static $secure = false;
     protected static $cacheBusterGeneratorFunction = null;
@@ -267,17 +267,17 @@ class Asset
         {
         	case static::ADD_TO_CSS:
 
-        		static::$css[] = $a;
+        		static::$css[$a] = $a;
         		break;
 
         	case static::ADD_TO_LESS:
 
-        		static::$less[] = $a;
+        		static::$less[$a] = $a;
         		break;
 
         	case static::ADD_TO_JS:
 
-        		static::$js[$name][] = $a;
+        		static::$js[$name][$a] = $a;
         		break;
         }
     }
@@ -297,25 +297,24 @@ class Asset
         {
         	case static::ADD_TO_CSS:
 
-        		array_unshift(static::$css, $a);
+                static::$css = [$a => $a] + static::$css;
         		break;
 
         	case static::ADD_TO_LESS:
 
-        		array_unshift(static::$less, $a);
+                static::$less = [$a => $a] + static::$less;
         		break;
 
         	case static::ADD_TO_JS:
 
                 if (!empty(static::$js[$name]))
                 {
-                    array_unshift(static::$js[$name], $a);
-                } else
-                    {
-                        static::$js[$name][] = $a;
-                    }
-
-        	    array_unshift(static::$less, $a);
+                    static::$js[$name] = [$a => $a] + static::$js[$name];
+                }
+                else
+                {
+                    static::$js[$name][$a] = $a;
+                }
         		break;
         }
     }
@@ -336,41 +335,45 @@ class Asset
         {
         	case static::ADD_TO_CSS:
 
-                $bpos = array_search($b, static::$css);
+                $bpos = array_search($b, array_keys(static::$css));
 
                 if ($bpos === 0)
                 {
                     static::addFirst($a, $name);
-                } elseif ($bpos >= 1)
-                    {
-                        $barr = array_slice(static::$css, $bpos);
-                        $aarr = array_slice(static::$css, 0, $bpos);
-                        array_push($aarr, $a);
-                        static::$css = array_merge($aarr, $barr);
-                    } else
-                        {
-                            static::$css[] = $a;
-                        }
+                }
+                elseif ($bpos >= 1)
+                {
+                    $barr = array_slice(static::$css, $bpos);
+                    $aarr = array_slice(static::$css, 0, $bpos);
+                    $aarr[$a] = $a;
+                    static::$css = array_merge($aarr, $barr);
+                }
+                else
+                {
+                    static::$css[$a] = $a;
+                }
 
         		break;
 
         	case static::ADD_TO_LESS:
 
-                $bpos = array_search($b, static::$less);
+                $bpos = array_search($b, array_keys(static::$less));
 
                 if ($bpos === 0)
                 {
                     static::addFirst($a, $name);
-                } elseif ($bpos >= 1)
-                    {
-                        $barr = array_slice(static::$less, $bpos);
-                        $aarr = array_slice(static::$less, 0, $bpos);
-                        array_push($aarr, $a);
-                        static::$less = array_merge($aarr, $barr);
-                    } else
-                        {
-                            static::$less[] = $a;
-                        }
+                }
+                elseif ($bpos >= 1)
+                {
+                    $barr = array_slice(static::$less, $bpos);
+                    $aarr = array_slice(static::$less, 0, $bpos);
+                    $aarr[$a] = $a;
+                    static::$less = array_merge($aarr, $barr);
+                }
+                else
+                {
+                    static::$less[$a] = $a;
+                }
 
         		break;
 
@@ -378,21 +381,23 @@ class Asset
 
                 if (!empty(static::$js[$name]))
                 {
-                    $bpos = array_search($b, static::$js[$name]);
+                    $bpos = array_search($b, array_keys(static::$js[$name]));
 
                     if ($bpos === 0)
                     {
                         static::addFirst($a, $name);
-                    } elseif ($bpos >= 1)
-                        {
-                            $barr = array_slice(static::$js[$name], $bpos);
-                            $aarr = array_slice(static::$js[$name], 0, $bpos);
-                            array_push($aarr, $a);
-                            static::$js[$name] = array_merge($aarr, $barr);
-                        } else
-                            {
-                                static::$js[$name][] = $a;
-                            }
+                    }
+                    elseif ($bpos >= 1)
+                    {
+                        $barr = array_slice(static::$js[$name], $bpos);
+                        $aarr = array_slice(static::$js[$name], 0, $bpos);
+                        $aarr[$a] = $a;
+                        static::$js[$name] = array_merge($aarr, $barr);
+                    }
+                    else
+                    {
+                        static::$js[$name][$a] = $a;
+                    }
                 }
 
                 break;
@@ -415,35 +420,37 @@ class Asset
             {
             	case static::ADD_TO_CSS:
 
-                    $bpos = array_search($b, static::$css);
+                    $bpos = array_search($b, array_keys(static::$css));
 
                     if ($bpos === 0 || $bpos > 0)
                     {
                         $barr = array_slice(static::$css, $bpos+1);
                         $aarr = array_slice(static::$css, 0, $bpos+1);
-                        array_push($aarr, $a);
+                        $aarr[$a] = $a;
                         static::$css = array_merge($aarr, $barr);
-                    } else
-                        {
-                            static::$css[] = $a;
-                        }
+                    }
+                    else
+                    {
+                        static::$css[$a] = $a;
+                    }
 
             		break;
 
             	case static::ADD_TO_LESS:
 
-                    $bpos = array_search($b, static::$less);
+                    $bpos = array_search($b, array_keys(static::$less));
 
                     if ($bpos === 0 || $bpos > 0)
                     {
                         $barr = array_slice(static::$less, $bpos+1);
                         $aarr = array_slice(static::$less, 0, $bpos+1);
-                        array_push($aarr, $a);
+                        $aarr[$a] = $a;
                         static::$less = array_merge($aarr, $barr);
-                    } else
-                        {
-                            static::$less[] = $a;
-                        }
+                    }
+                    else
+                    {
+                        static::$less[$a] = $a;
+                    }
 
             		break;
 
@@ -451,18 +458,19 @@ class Asset
 
                     if (!empty(static::$js[$name]))
                     {
-                        $bpos = array_search($b, static::$js[$name]);
+                        $bpos = array_search($b, array_keys(static::$js[$name]));
 
                         if ($bpos === 0 || $bpos > 0)
                         {
                             $barr = array_slice(static::$js[$name], $bpos+1);
                             $aarr = array_slice(static::$js[$name], 0, $bpos+1);
-                            array_push($aarr, $a);
+                            $aarr[$a] = $a;
                             static::$js[$name] = array_merge($aarr, $barr);
-                        } else
-                            {
-                                static::$js[$name][] = $a;
-                            }
+                        }
+                        else
+                        {
+                            static::$js[$name][$a] = $a;
+                        }
                     }
 
                     break;
@@ -480,7 +488,7 @@ class Asset
     */
     public static function addScript($s, $name = 'footer')
     {
-        static::$scripts[$name][] = $s;
+        static::$scripts[$name][$s] = $s;
     }
 
 
@@ -494,7 +502,7 @@ class Asset
     */
     public static function addStyle($style, $s = 'header')
     {
-        static::$styles[$s][] = $style;
+        static::$styles[$s][$style] = $style;
     }
 
 
@@ -719,6 +727,5 @@ class Asset
                 }
             }
     }
-
 
 }

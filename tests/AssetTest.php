@@ -22,6 +22,16 @@ class AssetTest extends PHPUnit_Framework_TestCase
 
         Asset::add('scriptWithParams.js', ['name'=>'footer2', 'type'=>'text/jsx', 'async' => 'true', 'defer'=>'true']);
 
+        $this->assertEquals('style.css', Asset::$css['style.css']);
+        $this->assertEquals('style.less', Asset::$less['style.less']);
+        $this->assertEquals('script.js', Asset::$js['footer']['script.js']);
+        $this->assertEquals('script.js', Asset::$js['foobar']['script.js']);
+
+        $this->assertEquals('scriptWithParams.js', Asset::$js['footer2']['scriptWithParams.js']);
+
+        // NOTE: KEEP TESTS BELLOW COMMENTED OUT !
+        // (versions change often and this test will fail)
+
         //Asset::add('tests/jquery/jquery-*.min.js','foobar');
 
         //Asset::add('https://cdn.roumen.it/repo/jquery/jquery-*.min.js','foobar');
@@ -37,14 +47,8 @@ class AssetTest extends PHPUnit_Framework_TestCase
         //Asset::add('https://code.jquery.com/mobile/*/jquery.mobile-1.4.5.min.js','foobar');
         //Asset::add('https://code.jquery.com/color/jquery.color-*.min.js','foobar');
 
-        $this->assertEquals('style.css', Asset::$css['style.css']);
-        $this->assertEquals('style.less', Asset::$less['style.less']);
-        $this->assertEquals('script.js', Asset::$js['footer']['script.js']);
-        $this->assertEquals('script.js', Asset::$js['foobar']['script.js']);
-
-        $this->assertEquals('scriptWithParams.js', Asset::$js['footer2']['scriptWithParams.js']);
-
         //$this->assertEquals('tests/jquery/query-3.3.3.min.js', Asset::$js['foobar']['tests/jquery/jquery-3.3.3.min.js']);
+
         //$this->assertEquals('https://cdn.roumen.it/repo/jquery/jquery-2.1.3.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/jquery/jquery-2.1.3.min.js']);
         //$this->assertEquals('https://cdn.roumen.it/repo/bootstrap/3.3.1/css/bootstrap.min.css', Asset::$css['https://cdn.roumen.it/repo/bootstrap/3.3.1/css/bootstrap.min.css']);
         //$this->assertEquals('https://cdn.roumen.it/repo/bootstrap/3.3.1/js/bootstrap.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/bootstrap/3.3.1/js/bootstrap.min.js']);
@@ -52,7 +56,6 @@ class AssetTest extends PHPUnit_Framework_TestCase
         //$this->assertEquals('https://cdn.roumen.it/repo/ckeditor/4.4.6/full/ckeditor.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/ckeditor/4.4.6/full/ckeditor.js']);
         //$this->assertEquals('https://cdn.roumen.it/repo/respond.js/1.4.2/respond.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/respond.js/1.4.2/respond.min.js']);
         //$this->assertEquals('https://cdn.roumen.it/repo/html5shiv/3.7.0/html5shiv.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/html5shiv/3.7.0/html5shiv.js']);
-
 
         //$this->assertEquals('https://code.jquery.com/jquery-2.1.4.min.js', Asset::$js['foobar']['https://code.jquery.com/jquery-2.1.4.min.js']);
         //$this->assertEquals('https://code.jquery.com/ui/1.11.4/jquery-ui.min.js', Asset::$js['foobar']['https://code.jquery.com/ui/1.11.4/jquery-ui.min.js']);
@@ -65,20 +68,21 @@ class AssetTest extends PHPUnit_Framework_TestCase
     {
         Asset::addScript('test');
 
-        $this->assertEquals('test', Asset::$scripts['footer']['test']);
+        $this->assertEquals('test', Asset::$scripts['footer'][0]);
 
         Asset::addScript('test','foobar');
 
-        $this->assertEquals('test', Asset::$scripts['foobar']['test']);
+        $this->assertEquals('test', Asset::$scripts['foobar'][0]);
     }
 
     public function testAddStyle()
     {
         Asset::addStyle('test');
-        $this->assertEquals('test', Asset::$styles['header']['test']);
+        Asset::addStyle('test2');
+        $this->assertEquals('test2', Asset::$styles['header'][1]);
 
-        Asset::addStyle('test','foobar');
-        $this->assertEquals('test', Asset::$styles['foobar']['test']);
+        Asset::addStyle('test123','foobar');
+        $this->assertEquals('test123', Asset::$styles['foobar'][0]);
     }
 
     public function testAddFirst()

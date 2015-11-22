@@ -9,6 +9,7 @@ class AssetTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         Asset::$environment = 'testing';
+        Asset::$cacheEnabled = false;
     }
 
     public function testAdd()
@@ -17,14 +18,46 @@ class AssetTest extends PHPUnit_Framework_TestCase
         Asset::add('style.css');
         Asset::add('style.less');
         Asset::add('script.js');
-        Asset::add('script.js','foobar');
-        Asset::add('scriptWithParams.js',['name'=>'footer2', 'type'=>'text/jsx', 'async' => 'true', 'defer'=>'true']);
+        Asset::add('script.js', 'foobar');
+
+        Asset::add('scriptWithParams.js', ['name'=>'footer2', 'type'=>'text/jsx', 'async' => 'true', 'defer'=>'true']);
+
+        //Asset::add('tests/jquery/jquery-*.min.js','foobar');
+
+        //Asset::add('https://cdn.roumen.it/repo/jquery/jquery-*.min.js','foobar');
+        //Asset::add('https://cdn.roumen.it/repo/jquery-ui/*/jquery-ui.min.js','foobar');
+        //Asset::add('https://cdn.roumen.it/repo/bootstrap/*/css/bootstrap.min.css');
+        //Asset::add('https://cdn.roumen.it/repo/bootstrap/*/js/bootstrap.min.js','foobar');
+        //Asset::add('https://cdn.roumen.it/repo/ckeditor/*/full/ckeditor.js','foobar');
+        //Asset::add('https://cdn.roumen.it/repo/respond.js/*/respond.min.js','foobar');
+        //Asset::add('https://cdn.roumen.it/repo/html5shiv/*/html5shiv.js','foobar');
+
+        //Asset::add('https://code.jquery.com/jquery-*.min.js','foobar');
+        //Asset::add('https://code.jquery.com/ui/*/jquery-ui.min.js','foobar');
+        //Asset::add('https://code.jquery.com/mobile/*/jquery.mobile-1.4.5.min.js','foobar');
+        //Asset::add('https://code.jquery.com/color/jquery.color-*.min.js','foobar');
 
         $this->assertEquals('style.css', Asset::$css['style.css']);
         $this->assertEquals('style.less', Asset::$less['style.less']);
         $this->assertEquals('script.js', Asset::$js['footer']['script.js']);
         $this->assertEquals('script.js', Asset::$js['foobar']['script.js']);
+
         $this->assertEquals('scriptWithParams.js', Asset::$js['footer2']['scriptWithParams.js']);
+
+        //$this->assertEquals('tests/jquery/query-3.3.3.min.js', Asset::$js['foobar']['tests/jquery/jquery-3.3.3.min.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/jquery/jquery-2.1.3.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/jquery/jquery-2.1.3.min.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/bootstrap/3.3.1/css/bootstrap.min.css', Asset::$css['https://cdn.roumen.it/repo/bootstrap/3.3.1/css/bootstrap.min.css']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/bootstrap/3.3.1/js/bootstrap.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/bootstrap/3.3.1/js/bootstrap.min.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/jquery-ui/1.11.2/jquery-ui.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/jquery-ui/1.11.2/jquery-ui.min.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/ckeditor/4.4.6/full/ckeditor.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/ckeditor/4.4.6/full/ckeditor.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/respond.js/1.4.2/respond.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/respond.js/1.4.2/respond.min.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/html5shiv/3.7.0/html5shiv.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/html5shiv/3.7.0/html5shiv.js']);
+
+
+        //$this->assertEquals('https://code.jquery.com/jquery-2.1.4.min.js', Asset::$js['foobar']['https://code.jquery.com/jquery-2.1.4.min.js']);
+        //$this->assertEquals('https://code.jquery.com/ui/1.11.4/jquery-ui.min.js', Asset::$js['foobar']['https://code.jquery.com/ui/1.11.4/jquery-ui.min.js']);
+        //$this->assertEquals('https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js', Asset::$js['foobar']['https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js']);
+        //$this->assertEquals('https://code.jquery.com/color/jquery.color-2.1.2.min.js', Asset::$js['foobar']['https://code.jquery.com/color/jquery.color-2.1.2.min.js']);
 
     }
 

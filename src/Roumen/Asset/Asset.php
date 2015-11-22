@@ -4,10 +4,13 @@
  * Asset class for laravel-assets package.
  *
  * @author Roumen Damianoff <roumen@dawebs.com>
- * @version 2.5.3
+ * @version 2.5.4
  * @link http://roumen.it/projects/laravel-assets
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
+
+use Illuminate\Support\Facades\Cache;
+
 class Asset
 {
     // This constant indicates where to add a asset;
@@ -41,6 +44,9 @@ class Asset
     public static $hash = [];
     public static $environment = null;
     public static $secure = false;
+    public static $cacheEnabled = true;
+    public static $cacheDuration = 360; // 6 hours
+    public static $cacheKey = 'laravel-assets';
     protected static $cacheBusterGeneratorFunction = null;
     private static $useShortHandReady = false;
     private static $onUnknownExtensionDefault = Asset::ON_UNKNOWN_EXTENSION_NONE;
@@ -264,6 +270,9 @@ class Asset
     */
     protected static function processAdd($a, $params, $onUnknownExtension = false)
     {
+        // check for '*' character
+        static::checkVersion($a);
+
         switch (static::getAddTo($a, $onUnknownExtension))
         {
         	case static::ADD_TO_CSS:
@@ -304,6 +313,9 @@ class Asset
     */
     public static function addFirst($a, $params = 'footer', $onUnknownExtension = false)
     {
+        // check for '*' character
+        static::checkVersion($a);
+
         switch (static::getAddTo($a, $onUnknownExtension))
         {
         	case static::ADD_TO_CSS:
@@ -352,6 +364,9 @@ class Asset
     */
     public static function addBefore($a, $b, $params = 'footer', $onUnknownExtension = false)
     {
+        // check for '*' character
+        static::checkVersion($a);
+
         switch (static::getAddTo($a, $onUnknownExtension))
         {
         	case static::ADD_TO_CSS:
@@ -447,6 +462,9 @@ class Asset
     */
     public static function addAfter($a, $b, $params = 'footer', $onUnknownExtension = false)
     {
+            // check for '*' character
+            static::checkVersion($a);
+
             switch (static::getAddTo($a, $onUnknownExtension))
             {
             	case static::ADD_TO_CSS:
@@ -780,4 +798,59 @@ class Asset
             }
     }
 
+
+    /**
+     * Checks if the asset has wildcard '*' character
+     *
+     * @param string &$a
+     *
+     * @return void
+    */
+    public static function checkVersion(&$a)
+    {
+        // check for '*' character
+        if (preg_match("/\*/i", $a))
+        {
+            // check for cached version
+            if (static::$cacheEnabled && Cache::has(static::$cacheKey.$a))
+            {
+                // use cached version
+                $a = Cache::get(static::$cacheKey.$a);
+            }
+            else
+            {
+                $a_org = $a;
+
+                // get latest version
+                preg_match("/(.*?)(\*)(.*)/", $a, $m1);
+                preg_match("/(.*)\/(.*)/", $m1[1], $m2);
+
+                if ($m2[2] != '')
+                {
+                    preg_match_all("/(".str_replace('/', '\/', $m2[2]).")(\d+(?:\.\d+){1,9})/i", file_get_contents($m2[1]), $m3, PREG_PATTERN_ORDER);
+                    usort($m3[2],'version_compare');
+                    $a = $m2[0].end($m3[2]).$m1[3];
+                }
+                else
+                {
+                    preg_match_all("/(\d+(?:\.\d+){1,9})(".str_replace('/', '\/', $m1[3]).")/i", file_get_contents($m2[1]), $m3, PREG_PATTERN_ORDER);
+
+                    if (!empty($m3[1]))
+                    {
+                        usort($m3[1],'version_compare');
+                        $a = $m2[0].end($m3[1]).$m1[3];
+                    }
+                    else
+                    {
+                        preg_match_all("/(\d+(?:\.\d+){1,9})/i", file_get_contents($m2[1]), $m3, PREG_PATTERN_ORDER);
+                        usort($m3[1],'version_compare');
+                        $a = $m2[0].end($m3[1]).$m1[3];
+                    }
+                }
+
+                // cache latest version
+                if (static::$cacheEnabled) Cache::put(static::$cacheKey.$a_org, $a, static::$cacheDuration);
+            }
+        }
+    }
 }

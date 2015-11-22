@@ -547,7 +547,7 @@ class Asset
     */
     public static function addScript($s, $name = 'footer')
     {
-        static::$scripts[$name][$s] = $s;
+        static::$scripts[$name][] = $s;
     }
 
 
@@ -561,7 +561,7 @@ class Asset
     */
     public static function addStyle($style, $s = 'header')
     {
-        static::$styles[$s][$style] = $style;
+        static::$styles[$s][] = $style;
     }
 
 

@@ -825,15 +825,18 @@ class Asset
                 preg_match("/(.*?)(\*)(.*)/", $a, $m1);
                 preg_match("/(.*)\/(.*)/", $m1[1], $m2);
 
+                // check if is url or path
+                (preg_match('/(https?:)?\/\//i', $a)) ? $f = file_get_contents($m2[1]) : $f = json_encode(scandir($m2[1], 1));
+
                 if ($m2[2] != '')
                 {
-                    preg_match_all("/(".str_replace('/', '\/', $m2[2]).")(\d+(?:\.\d+){1,9})/i", file_get_contents($m2[1]), $m3, PREG_PATTERN_ORDER);
+                    preg_match_all("/(".str_replace('/', '\/', $m2[2]).")(\d+(?:\.\d+){1,9})/i", $f, $m3, PREG_PATTERN_ORDER);
                     usort($m3[2],'version_compare');
                     $a = $m2[0].end($m3[2]).$m1[3];
                 }
                 else
                 {
-                    preg_match_all("/(\d+(?:\.\d+){1,9})(".str_replace('/', '\/', $m1[3]).")/i", file_get_contents($m2[1]), $m3, PREG_PATTERN_ORDER);
+                    preg_match_all("/(\d+(?:\.\d+){1,9})(".str_replace('/', '\/', $m1[3]).")/i", $f, $m3, PREG_PATTERN_ORDER);
 
                     if (!empty($m3[1]))
                     {
@@ -842,15 +845,16 @@ class Asset
                     }
                     else
                     {
-                        preg_match_all("/(\d+(?:\.\d+){1,9})/i", file_get_contents($m2[1]), $m3, PREG_PATTERN_ORDER);
+                        preg_match_all("/(\d+(?:\.\d+){1,9})/i", $f, $m3, PREG_PATTERN_ORDER);
                         usort($m3[1],'version_compare');
                         $a = $m2[0].end($m3[1]).$m1[3];
                     }
                 }
-
-                // cache latest version
-                if (static::$cacheEnabled) Cache::put(static::$cacheKey.$a_org, $a, static::$cacheDuration);
             }
+
+            // cache latest version
+            if (static::$cacheEnabled) Cache::put(static::$cacheKey.$a_org, $a, static::$cacheDuration);
         }
     }
+
 }

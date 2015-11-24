@@ -28,13 +28,23 @@ class AssetTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('script.js', Asset::$js['foobar']['script.js']);
 
         $this->assertEquals('scriptWithParams.js', Asset::$js['footer2']['scriptWithParams.js']);
+    }
 
-        // NOTE: KEEP TESTS BELLOW COMMENTED OUT !
-        // (versions change often and this test will fail)
+    public function testAddWildcard()
+    {
+        /* local assets */
 
-        //Asset::add('tests/jquery/jquery-*.min.js','foobar');
+        Asset::add('tests/files/cdn/test/test-*.min.js','foobar');
+        Asset::add('tests/files/cdn/*/test.min.js','foobar');
 
-        //Asset::add('https://cdn.roumen.it/repo/jquery/jquery-*.min.js','foobar');
+        $this->assertEquals('tests/files/cdn/test/test-3.3.3.min.js', Asset::$js['foobar']['tests/files/cdn/test/test-3.3.3.min.js']);
+        $this->assertEquals('tests/files/cdn/3.3.3/test.min.js', Asset::$js['foobar']['tests/files/cdn/3.3.3/test.min.js']);
+
+        // NOTE: KEEP TESTS BELLOW COMMENTED OUT! Versions change often and they will fail.
+
+        /* cdn.roumen.it */
+
+        //sset::add('https://cdn.roumen.it/repo/jquery/jquery-*.min.js','foobar');
         //Asset::add('https://cdn.roumen.it/repo/jquery-ui/*/jquery-ui.min.js','foobar');
         //Asset::add('https://cdn.roumen.it/repo/bootstrap/*/css/bootstrap.min.css');
         //Asset::add('https://cdn.roumen.it/repo/bootstrap/*/js/bootstrap.min.js','foobar');
@@ -42,26 +52,25 @@ class AssetTest extends PHPUnit_Framework_TestCase
         //Asset::add('https://cdn.roumen.it/repo/respond.js/*/respond.min.js','foobar');
         //Asset::add('https://cdn.roumen.it/repo/html5shiv/*/html5shiv.js','foobar');
 
+        //$this->assertEquals('https://cdn.roumen.it/repo/jquery/jquery-2.1.4.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/jquery/jquery-2.1.4.min.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/jquery-ui/1.11.4/jquery-ui.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/jquery-ui/1.11.4/jquery-ui.min.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/bootstrap/3.3.1/css/bootstrap.min.css', Asset::$css['https://cdn.roumen.it/repo/bootstrap/3.3.1/css/bootstrap.min.css']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/bootstrap/3.3.1/js/bootstrap.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/bootstrap/3.3.1/js/bootstrap.min.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/ckeditor/4.4.6/full/ckeditor.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/ckeditor/4.4.6/full/ckeditor.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/respond.js/1.4.2/respond.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/respond.js/1.4.2/respond.min.js']);
+        //$this->assertEquals('https://cdn.roumen.it/repo/html5shiv/3.7.0/html5shiv.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/html5shiv/3.7.0/html5shiv.js']);
+
+        /* code.jquery.com */
+
         //Asset::add('https://code.jquery.com/jquery-*.min.js','foobar');
         //Asset::add('https://code.jquery.com/ui/*/jquery-ui.min.js','foobar');
         //Asset::add('https://code.jquery.com/mobile/*/jquery.mobile-1.4.5.min.js','foobar');
         //Asset::add('https://code.jquery.com/color/jquery.color-*.min.js','foobar');
 
-        //$this->assertEquals('tests/jquery/query-3.3.3.min.js', Asset::$js['foobar']['tests/jquery/jquery-3.3.3.min.js']);
-
-        //$this->assertEquals('https://cdn.roumen.it/repo/jquery/jquery-2.1.3.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/jquery/jquery-2.1.3.min.js']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/bootstrap/3.3.1/css/bootstrap.min.css', Asset::$css['https://cdn.roumen.it/repo/bootstrap/3.3.1/css/bootstrap.min.css']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/bootstrap/3.3.1/js/bootstrap.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/bootstrap/3.3.1/js/bootstrap.min.js']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/jquery-ui/1.11.2/jquery-ui.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/jquery-ui/1.11.2/jquery-ui.min.js']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/ckeditor/4.4.6/full/ckeditor.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/ckeditor/4.4.6/full/ckeditor.js']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/respond.js/1.4.2/respond.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/respond.js/1.4.2/respond.min.js']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/html5shiv/3.7.0/html5shiv.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/html5shiv/3.7.0/html5shiv.js']);
-
         //$this->assertEquals('https://code.jquery.com/jquery-2.1.4.min.js', Asset::$js['foobar']['https://code.jquery.com/jquery-2.1.4.min.js']);
         //$this->assertEquals('https://code.jquery.com/ui/1.11.4/jquery-ui.min.js', Asset::$js['foobar']['https://code.jquery.com/ui/1.11.4/jquery-ui.min.js']);
         //$this->assertEquals('https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js', Asset::$js['foobar']['https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js']);
         //$this->assertEquals('https://code.jquery.com/color/jquery.color-2.1.2.min.js', Asset::$js['foobar']['https://code.jquery.com/color/jquery.color-2.1.2.min.js']);
-
     }
 
     public function testAddScript()
@@ -350,7 +359,7 @@ class AssetTest extends PHPUnit_Framework_TestCase
         Asset::$css = [];
         Asset::$hash = [];
 
-        Asset::setCachebuster('tests/cache.json');
+        Asset::setCachebuster('tests/files/cache.json');
 
         $this->assertEquals(Asset::$hash, [
                                             '1.js' => '27f771f4d8aeea4878c2b5ac39a2031f',

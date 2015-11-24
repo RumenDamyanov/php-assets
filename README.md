@@ -12,7 +12,7 @@ Branch dev-master is for development and is unstable
 
 ## Installation
 
-Run the following command and provide the latest stable version (e.g v2.5.1) :
+Run the following command and provide the latest stable version (e.g v2.5.4) :
 
 ```bash
 composer require roumen/asset

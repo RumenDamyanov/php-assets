@@ -811,6 +811,8 @@ class Asset
         // check for '*' character
         if (preg_match("/\*/i", $a))
         {
+            $a_org = $a;
+
             // check for cached version
             if (static::$cacheEnabled && Cache::has(static::$cacheKey.$a))
             {
@@ -819,8 +821,6 @@ class Asset
             }
             else
             {
-                $a_org = $a;
-
                 // get latest version
                 preg_match("/(.*?)(\*)(.*)/", $a, $m1);
                 preg_match("/(.*)\/(.*)/", $m1[1], $m2);

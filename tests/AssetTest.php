@@ -270,7 +270,7 @@ class AssetTest extends PHPUnit_Framework_TestCase
         Asset::$css = [];
         Asset::add(['1.css','http://foo.dev/2.css'], 'header');
 
-        $expected = '<link rel="stylesheet" type="text/css" href="/1.css" />'."\n".'<link rel="stylesheet" type="text/css" href="http://foo.dev/2.css" />'."\n";
+        $expected = '<link rel="stylesheet" type="text/css" href="/1.css">'."\n".'<link rel="stylesheet" type="text/css" href="http://foo.dev/2.css">'."\n";
 
         $this->expectOutputString($expected, Asset::css('header'));
     }
@@ -288,7 +288,7 @@ class AssetTest extends PHPUnit_Framework_TestCase
         Asset::$less = [];
         Asset::add(['1.less','http://foo.dev/2.less'], 'header');
 
-        $expected = '<link rel="stylesheet/less" type="text/css" href="/1.less" />'."\n".'<link rel="stylesheet/less" type="text/css" href="http://foo.dev/2.less" />'."\n";
+        $expected = '<link rel="stylesheet/less" type="text/css" href="/1.less">'."\n".'<link rel="stylesheet/less" type="text/css" href="http://foo.dev/2.less">'."\n";
 
         $this->expectOutputString($expected, Asset::less('header'));
     }

@@ -623,7 +623,7 @@ class Asset
         {
             foreach(static::$css as $file)
             {
-                echo static::$prefix, '<link rel="stylesheet" type="text/css" href="', static::url($file), "\" />\n";
+                echo static::$prefix, '<link rel="stylesheet" type="text/css" href="', static::url($file), "\">\n";
             }
         }
     }
@@ -663,7 +663,7 @@ class Asset
         {
             foreach(static::$less as $file)
             {
-                echo static::$prefix, '<link rel="stylesheet/less" type="text/css" href="', static::url($file), "\" />\n";
+                echo static::$prefix, '<link rel="stylesheet/less" type="text/css" href="', static::url($file), "\">\n";
             }
         }
     }

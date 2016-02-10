@@ -42,23 +42,23 @@ class AssetTest extends PHPUnit_Framework_TestCase
 
         // NOTE: KEEP TESTS BELLOW COMMENTED OUT! Versions change often and they will fail.
 
-        /* cdn.roumen.it */
+        /* cdn.somesite.tld */
 
-        //sset::add('https://cdn.roumen.it/repo/jquery/jquery-*.min.js','foobar');
-        //Asset::add('https://cdn.roumen.it/repo/jquery-ui/*/jquery-ui.min.js','foobar');
-        //Asset::add('https://cdn.roumen.it/repo/bootstrap/*/css/bootstrap.min.css');
-        //Asset::add('https://cdn.roumen.it/repo/bootstrap/*/js/bootstrap.min.js','foobar');
-        //Asset::add('https://cdn.roumen.it/repo/ckeditor/*/full/ckeditor.js','foobar');
-        //Asset::add('https://cdn.roumen.it/repo/respond.js/*/respond.min.js','foobar');
-        //Asset::add('https://cdn.roumen.it/repo/html5shiv/*/html5shiv.js','foobar');
+        //sset::add('https://cdn.somesite.tld/repo/jquery/jquery-*.min.js','foobar');
+        //Asset::add('https://cdn.somesite.tld/repo/jquery-ui/*/jquery-ui.min.js','foobar');
+        //Asset::add('https://cdn.somesite.tld/repo/bootstrap/*/css/bootstrap.min.css');
+        //Asset::add('https://cdn.somesite.tld/repo/bootstrap/*/js/bootstrap.min.js','foobar');
+        //Asset::add('https://cdn.somesite.tld/repo/ckeditor/*/full/ckeditor.js','foobar');
+        //Asset::add('https://cdn.somesite.tld/repo/respond.js/*/respond.min.js','foobar');
+        //Asset::add('https://cdn.somesite.tld/repo/html5shiv/*/html5shiv.js','foobar');
 
-        //$this->assertEquals('https://cdn.roumen.it/repo/jquery/jquery-2.1.4.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/jquery/jquery-2.1.4.min.js']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/jquery-ui/1.11.4/jquery-ui.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/jquery-ui/1.11.4/jquery-ui.min.js']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/bootstrap/3.3.1/css/bootstrap.min.css', Asset::$css['https://cdn.roumen.it/repo/bootstrap/3.3.1/css/bootstrap.min.css']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/bootstrap/3.3.1/js/bootstrap.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/bootstrap/3.3.1/js/bootstrap.min.js']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/ckeditor/4.4.6/full/ckeditor.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/ckeditor/4.4.6/full/ckeditor.js']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/respond.js/1.4.2/respond.min.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/respond.js/1.4.2/respond.min.js']);
-        //$this->assertEquals('https://cdn.roumen.it/repo/html5shiv/3.7.0/html5shiv.js', Asset::$js['foobar']['https://cdn.roumen.it/repo/html5shiv/3.7.0/html5shiv.js']);
+        //$this->assertEquals('https://cdn.somesite.tld/repo/jquery/jquery-2.1.4.min.js', Asset::$js['foobar']['https://cdn.somesite.tld/repo/jquery/jquery-2.1.4.min.js']);
+        //$this->assertEquals('https://cdn.somesite.tld/repo/jquery-ui/1.11.4/jquery-ui.min.js', Asset::$js['foobar']['https://cdn.somesite.tld/repo/jquery-ui/1.11.4/jquery-ui.min.js']);
+        //$this->assertEquals('https://cdn.somesite.tld/repo/bootstrap/3.3.1/css/bootstrap.min.css', Asset::$css['https://cdn.somesite.tld/repo/bootstrap/3.3.1/css/bootstrap.min.css']);
+        //$this->assertEquals('https://cdn.somesite.tld/repo/bootstrap/3.3.1/js/bootstrap.min.js', Asset::$js['foobar']['https://cdn.somesite.tld/repo/bootstrap/3.3.1/js/bootstrap.min.js']);
+        //$this->assertEquals('https://cdn.somesite.tld/repo/ckeditor/4.4.6/full/ckeditor.js', Asset::$js['foobar']['https://cdn.somesite.tld/repo/ckeditor/4.4.6/full/ckeditor.js']);
+        //$this->assertEquals('https://cdn.somesite.tld/repo/respond.js/1.4.2/respond.min.js', Asset::$js['foobar']['https://cdn.somesite.tld/repo/respond.js/1.4.2/respond.min.js']);
+        //$this->assertEquals('https://cdn.somesite.tld/repo/html5shiv/3.7.0/html5shiv.js', Asset::$js['foobar']['https://cdn.somesite.tld/repo/html5shiv/3.7.0/html5shiv.js']);
 
         /* code.jquery.com */
 

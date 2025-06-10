@@ -772,7 +772,7 @@ final class Asset
      * Internal: file_get_contents wrapper for testability.
      * @internal
      */
-    private static function getFileContents(string $file)
+    private static function getFileContents(string $file): string|false
     {
         if (isset(static::$fileContentsCallback) && is_callable(static::$fileContentsCallback)) {
             return call_user_func(static::$fileContentsCallback, $file);
@@ -782,6 +782,7 @@ final class Asset
 
     /**
      * @internal For testing: override file_get_contents
+     * @var null|callable(string):string|false
      */
     public static $fileContentsCallback = null;
 }

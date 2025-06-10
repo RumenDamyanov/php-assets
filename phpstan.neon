@@ -1,0 +1,7 @@
+parameters:
+  level: max
+  paths:
+    - src
+  excludePaths:
+    - src/Rumenx/Assets/Laravel
+    - src/Rumenx/Assets/Symfony

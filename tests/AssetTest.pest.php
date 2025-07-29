@@ -1005,4 +1005,56 @@ describe('Asset', function () {
         $method->invoke(null, 'custom');
         expect(isset(Asset::$js['custom']))->toBeFalse();
     });
+
+    it('getOnUnknownExtensionDefault returns current setting', function () {
+        // Test default value (after beforeEach reset)
+        expect(Asset::getOnUnknownExtensionDefault())->toBe(Asset::ON_UNKNOWN_EXTENSION_NONE);
+
+        // Test after changing the setting to a valid value
+        Asset::setOnUnknownExtensionDefault(Asset::ON_UNKNOWN_EXTENSION_LESS);
+        expect(Asset::getOnUnknownExtensionDefault())->toBe(Asset::ON_UNKNOWN_EXTENSION_LESS);
+
+        // Reset for other tests
+        Asset::setOnUnknownExtensionDefault(Asset::ON_UNKNOWN_EXTENSION_NONE);
+    });
+
+    it('setCachebuster handles getFileContents returning false', function () {
+        // Create a temporary file that exists
+        $tmpFile = tempnam(sys_get_temp_dir(), 'asset_test');
+        file_put_contents($tmpFile, '{"test": "content"}');
+
+        // Create a mock callback that returns false (simulating file read failure)
+        Asset::$fileContentsCallback = fn($file) => false;
+
+        // This should handle the case where getFileContents returns false
+        Asset::setCachebuster($tmpFile);
+
+        // Hash should be reset to empty array
+        expect(Asset::$hash)->toBe([]);
+
+        // Reset callback and clean up
+        Asset::$fileContentsCallback = null;
+        unlink($tmpFile);
+    });
+
+    it('getFileContents uses file_get_contents when no callback is set', function () {
+        // Ensure no callback is set
+        Asset::$fileContentsCallback = null;
+
+        // Create a temporary file to test with
+        $tmpFile = tempnam(sys_get_temp_dir(), 'asset_test');
+        file_put_contents($tmpFile, 'test content');
+
+        // Use reflection to call the private method
+        $reflection = new ReflectionClass(Asset::class);
+        $method = $reflection->getMethod('getFileContents');
+        $method->setAccessible(true);
+
+        // This should use file_get_contents directly
+        $result = $method->invoke(null, $tmpFile);
+        expect($result)->toBe('test content');
+
+        // Clean up
+        unlink($tmpFile);
+    });
 });

@@ -4,7 +4,7 @@
 [![PHPStan](https://github.com/RumenDamyanov/php-assets/actions/workflows/phpstan.yml/badge.svg?branch=master)](https://github.com/RumenDamyanov/php-assets/actions/workflows/phpstan.yml)
 [![codecov](https://codecov.io/gh/RumenDamyanov/php-assets/branch/master/graph/badge.svg)](https://codecov.io/gh/RumenDamyanov/php-assets)
 
-Framework-agnostic PHP package to manage frontend assets in the backend. Works with plain PHP, Laravel, and Symfony (via adapters).
+Framework-agnostic PHP package to manage frontend assets in the backend. Works with plain PHP, Laravel, and Symfony with no special configuration required.
 
 
 ## Features
@@ -12,7 +12,8 @@ Framework-agnostic PHP package to manage frontend assets in the backend. Works w
 - Add, order, and output CSS, LESS, and JS assets from PHP
 - Cache busting (file or function based)
 - Environment and domain support
-- Laravel and Symfony integration via adapters
+- Works directly with Laravel, Symfony, and any PHP framework
+- No special configuration or adapters required
 - 100% test coverage, static analysis, and CI
 
 ---
@@ -64,59 +65,71 @@ Asset::setPrefix('X-');
 
 ---
 
+## Design Philosophy
+
+This package follows a **simple, framework-agnostic approach** by design. Unlike some asset management packages that require service providers, adapters, or complex integrations, php-assets works out-of-the-box with any PHP framework or plain PHP project.
+
+**Why no special adapters or service providers?**
+
+- **Simplicity**: Just use `Asset::add()` - no magic, no hidden complexity
+- **Universal compatibility**: Works with Laravel, Symfony, CodeIgniter, or any PHP framework
+- **Easy debugging**: No framework-specific layers to troubleshoot
+- **Minimal maintenance**: No need to maintain separate adapters for different frameworks
+- **Standard PHP**: Uses only basic PHP features (static methods, arrays, string manipulation)
+
+This approach makes the package more reliable, easier to understand, and ensures it will continue working across different framework versions without requiring updates.
+
+---
+
 ### Laravel Integration
 
-1. Register the service provider in `config/app.php`:
+```php
+use Rumenx\Assets\Asset;
 
-    ```php
-    Rumenx\Assets\Laravel\AssetServiceProvider::class,
-    ```
+// In your controller or anywhere in your Laravel app
+Asset::add('main.css');
+Asset::add('main.js');
 
-2. Use the Asset class anywhere in your app:
-
-    ```php
-    use Rumenx\Assets\Asset;
-
-    Asset::add('main.css');
-    Asset::add('main.js');
-
-    // In your Blade template
-    {!! Asset::css() !!}
-    {!! Asset::js() !!}
-    ```
-
-3. (Optional) Bindings are available via the Laravel container:
-
-    ```php
-    $assets = app('assets');
-    $assets::add('custom.js');
-    ```
+// In your Blade template
+{!! Asset::css() !!}
+{!! Asset::js() !!}
+```
 
 ---
 
 ### Symfony Integration
 
-1. Register the bundle in your Symfony app:
+```php
+use Rumenx\Assets\Asset;
 
-    ```php
-    // config/bundles.php
-    return [
-        Rumenx\Assets\Symfony\AssetBundle::class => ['all' => true],
-    ];
-    ```
+// In your controller
+Asset::add('main.css');
+Asset::add('main.js');
 
-2. Use the Asset class in your controllers or templates:
+// In a Twig template
+{{ asset_css()|raw }}
+{{ asset_js()|raw }}
+```
 
-    ```php
-    use Rumenx\Assets\Asset;
+Or create a simple Twig extension:
 
-    Asset::add('main.css');
-    Asset::add('main.js');
+```php
+// src/Twig/AssetExtension.php
+use Rumenx\Assets\Asset;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-    // In a Twig template
-    dump(Asset::css());
-    dump(Asset::js());
-    ```
+class AssetExtension extends AbstractExtension
+{
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('asset_css', fn() => Asset::css()),
+            new TwigFunction('asset_js', fn() => Asset::js()),
+        ];
+    }
+}
+```
 
 ---
 
@@ -146,9 +159,39 @@ composer test
 composer analyze
 ```
 
-## CI/CD
+## Development & Testing
+
+### Running Tests
+
+```bash
+composer test
+```
+
+### Running Static Analysis
+
+```bash
+composer analyze
+```
+
+### CI/CD
 
 - GitHub Actions for tests, static analysis, and Codecov coverage reporting.
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to get started.
+
+## Security
+
+If you discover a security vulnerability, please review our [Security Policy](SECURITY.md) for information on how to report it responsibly.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes to this project.
+
+## Funding
+
+If you find this project useful, consider [supporting its development](FUNDING.yml).
 
 ## License
 

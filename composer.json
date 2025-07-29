@@ -1,6 +1,6 @@
 {
     "name": "rumenx/php-assets",
-    "description": "Framework-agnostic PHP package to manage frontend assets in the backend. Integrations for Laravel and Symfony included.",
+    "description": "Framework-agnostic PHP package to manage frontend assets in the backend. Works with plain PHP, Laravel, Symfony, and any PHP framework.",
     "keywords": ["php", "assets", "manager", "laravel", "symfony", "framework-agnostic", "frontend"],
     "license": "MIT",
     "authors": [
@@ -14,9 +14,7 @@
     },
     "require-dev": {
         "pestphp/pest": "^2.0",
-        "phpstan/phpstan": "^1.10",
-        "illuminate/support": "^12.17",
-        "symfony/http-kernel": "^7.3"
+        "phpstan/phpstan": "^1.10"
     },
     "autoload": {
         "psr-4": {

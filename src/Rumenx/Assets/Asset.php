@@ -47,7 +47,7 @@ final class Asset
     public static array $css = [];
     /** @var array<string, string> LESS assets */
     public static array $less = [];
-    /** @var array<string, string[]> Inline styles by section */
+    /** @var array<string, mixed[]> Inline styles by section (defensive: should be strings) */
     public static array $styles = [];
     /** @var array<string, string[]> JS assets by section */
     public static array $js = [];
@@ -615,7 +615,8 @@ final class Asset
         if (($name !== '') && (!empty(static::$styles[$name]))) {
             echo "\n", static::$prefix, "<style type=\"text/css\">\n", static::$prefix;
             foreach(static::$styles[$name] as $style) {
-                if (is_string($style)) {
+                // Defensive programming: ensure we only output strings
+                if (is_string($style) && $style !== '') {
                     echo "$style\n", static::$prefix;
                 }
             }
@@ -624,6 +625,7 @@ final class Asset
             echo static::$prefix, "<style type=\"text/css\">\n";
             foreach(static::$styles as $section) {
                 foreach ($section as $style) {
+                    // Defensive programming: ensure we only output strings
                     if (is_string($style) && $style !== '') {
                         echo static::$prefix, '<style>', $style, '</style>\n';
                     }

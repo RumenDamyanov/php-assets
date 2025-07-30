@@ -13,7 +13,7 @@
         "php": ">=8.3"
     },
     "require-dev": {
-        "pestphp/pest": "^2.0",
+        "pestphp/pest": "^3.8",
         "phpstan/phpstan": "^1.10"
     },
     "autoload": {

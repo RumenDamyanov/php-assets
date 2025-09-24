@@ -6,15 +6,28 @@
     "authors": [
         {
             "name": "Rumen Damyanov",
-            "email": "contact@rumenx.com"
+            "email": "contact@rumenx.com",
+            "role": "Developer",
+            "homepage": "https://rumenx.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/RumenDamyanov/php-assets/issues",
+        "source": "https://github.com/RumenDamyanov/php-assets",
+        "wiki": "https://github.com/RumenDamyanov/php-assets/wiki"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/RumenDamyanov"
         }
     ],
     "require": {
-        "php": ">=8.3"
+        "php": "^8.2"
     },
     "require-dev": {
-        "pestphp/pest": "^4.0",
-        "phpstan/phpstan": "^2.1"
+        "pestphp/pest": "^2.0 || ^3.0 || ^4.0",
+        "phpstan/phpstan": "^1.0 || ^2.0"
     },
     "autoload": {
         "psr-4": {

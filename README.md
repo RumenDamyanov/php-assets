@@ -1,198 +1,64 @@
 # rumenx/php-assets
 
-[![CI](https://github.com/RumenDamyanov/php-assets/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/RumenDamyanov/php-assets/actions/workflows/ci.yml)
-[![PHPStan](https://github.com/RumenDamyanov/php-assets/actions/workflows/phpstan.yml/badge.svg?branch=master)](https://github.com/RumenDamyanov/php-assets/actions/workflows/phpstan.yml)
-[![codecov](https://codecov.io/gh/RumenDamyanov/php-assets/branch/master/graph/badge.svg)](https://codecov.io/gh/RumenDamyanov/php-assets)
+**This package is abandoned.**
 
-Framework-agnostic PHP package to manage frontend assets in the backend. Works with plain PHP, Laravel, and Symfony with no special configuration required.
+The GitHub repository is archived and read-only. Packagist marks [`rumenx/php-assets`](https://packagist.org/packages/rumenx/php-assets) as abandoned. Composer still installs the last release and prints a warning. There will be no further PHP, security, or feature updates.
 
+Abandoned on 28 October 2026.
 
-## Features
+## What it was
 
-- Add, order, and output CSS, LESS, and JS assets from PHP
-- Cache busting (file or function based)
-- Environment and domain support
-- Works directly with Laravel, Symfony, and any PHP framework
-- No special configuration or adapters required
-- 100% test coverage, static analysis, and CI
+`rumenx/php-assets` collects CSS, LESS, and JavaScript URLs during a request and prints `<link>` and `<script>` tags. The list lives in public static properties on `Rumenx\Assets\Asset`. Cache busting is a query string. LESS is emitted as `<link rel="stylesheet/less">`, which depends on less.js in the browser. Inline "ready" scripts can be wrapped in `$(document).ready(...)`.
 
----
+That is the asset-manager style from around 2013–2015. A `v2.5.5` tag in this history is from December 2015. The 2025 release kept the same static collector and dropped the old Laravel and Symfony adapters.
 
-## Installation
+## Why it stops here
 
-```bash
-composer require rumenx/php-assets
-```
+Rendering a page no longer needs a PHP class to decide how stylesheets and scripts are built.
 
----
+- Files are bundled, minified, and content-hashed by a build tool. The hash is in the filename, so a query-string bump is unnecessary.
+- LESS in the browser, and a jQuery ready wrapper, are not how pages are written now.
+- A static list on a class is process-wide. On a long-running worker such as Laravel Octane or Swoole, one request's assets leak into the next.
+- The interesting remaining case is a classic multi-page PHP app with a few known files and no build step. That is a couple of tags in the layout, or `filemtime()` on the query string. It does not need this package.
 
-## Usage Examples
+Nothing else on Packagist depends on `rumenx/php-assets`.
 
-### Plain PHP
+## What to use instead
 
-```php
-use Rumenx\Assets\Asset;
+**Laravel.** Use [Vite](https://laravel.com/docs/vite). Register entry files in `vite.config.js` and render them with `@vite`. Laravel's Vite integration writes the hashed URLs. Do not collect those URLs again in PHP.
 
-// Add assets
-Asset::add('style.css');
-Asset::add('theme.less');
-Asset::add('app.js');
-Asset::add(['extra.js', 'extra2.js'], 'footer');
+**Symfony.** Use [AssetMapper](https://symfony.com/doc/current/frontend/asset_mapper.html) when the app should not require Node. AssetMapper serves import maps and versioned assets. Use [Webpack Encore](https://symfony.com/doc/current/frontend.html) or Vite when the app needs a bundler. Symfony's asset component already versions URLs.
 
-// Add inline style or script
-Asset::addStyle('body { background: #fafafa; }');
-Asset::addScript('console.log("Hello!");');
+**Any app with a build.** Use Vite or esbuild. Point the HTML at the built files. The content hash in the filename is the cache buster. A CDN is a copy of that `build/` directory, not a domain prefix applied in PHP.
 
-// Output in your template
-Asset::css();      // <link rel="stylesheet" ...>
-Asset::less();     // <link rel="stylesheet/less" ...>
-Asset::js();       // <script src=...></script>
-Asset::styles();   // <style>...</style>
-Asset::scripts();  // <script>...</script>
-
-// Use cachebuster (file-based)
-Asset::setCachebuster(__DIR__.'/cache.json');
-
-// Use cachebuster (function-based)
-Asset::setCacheBusterGeneratorFunction(function($file) {
-    return md5($file);
-});
-
-// Custom domain or prefix
-Asset::setDomain('https://cdn.example.com/');
-Asset::setPrefix('X-');
-```
-
----
-
-## Design Philosophy
-
-This package follows a **simple, framework-agnostic approach** by design. Unlike some asset management packages that require service providers, adapters, or complex integrations, php-assets works out-of-the-box with any PHP framework or plain PHP project.
-
-**Why no special adapters or service providers?**
-
-- **Simplicity**: Just use `Asset::add()` - no magic, no hidden complexity
-- **Universal compatibility**: Works with Laravel, Symfony, CodeIgniter, or any PHP framework
-- **Easy debugging**: No framework-specific layers to troubleshoot
-- **Minimal maintenance**: No need to maintain separate adapters for different frameworks
-- **Standard PHP**: Uses only basic PHP features (static methods, arrays, string manipulation)
-
-This approach makes the package more reliable, easier to understand, and ensures it will continue working across different framework versions without requiring updates.
-
----
-
-### Laravel Integration
+**No build step.** Put the tags in the layout and use the file's modification time as the query string:
 
 ```php
-use Rumenx\Assets\Asset;
-
-// In your controller or anywhere in your Laravel app
-Asset::add('main.css');
-Asset::add('main.js');
-
-// In your Blade template
-{!! Asset::css() !!}
-{!! Asset::js() !!}
+$css = '/css/app.css';
+$js = '/js/app.js';
+$cssVersion = filemtime(__DIR__ . '/public' . $css);
+$jsVersion = filemtime(__DIR__ . '/public' . $js);
 ```
 
----
-
-### Symfony Integration
-
-```php
-use Rumenx\Assets\Asset;
-
-// In your controller
-Asset::add('main.css');
-Asset::add('main.js');
-
-// In a Twig template
-{{ asset_css()|raw }}
-{{ asset_js()|raw }}
+```html
+<link rel="stylesheet" href="/css/app.css?v=<?= $cssVersion ?>">
+<script src="/js/app.js?v=<?= $jsVersion ?>" defer></script>
 ```
 
-Or create a simple Twig extension:
+In Laravel that is `filemtime(public_path('css/app.css'))` inside a Blade layout. In Twig, pass the version from the controller or call `filemtime` through a small extension. Escape any URL that comes from user input before it is placed in `href` or `src`.
 
-```php
-// src/Twig/AssetExtension.php
-use Rumenx\Assets\Asset;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+**WordPress.** Use `wp_enqueue_style()` and `wp_enqueue_script()`.
 
-class AssetExtension extends AbstractExtension
-{
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('asset_css', fn() => Asset::css()),
-            new TwigFunction('asset_js', fn() => Asset::js()),
-        ];
-    }
-}
-```
+## If you already depend on it
 
----
-
-## Advanced Usage
-
-- **Add assets to specific locations:**
-  - `Asset::add('file.js', 'header');` // Add JS to header
-  - `Asset::addFirst('file.js');` // Add as first asset
-  - `Asset::addBefore('new.js', 'old.js');` // Insert before another
-  - `Asset::addAfter('new.js', 'old.js');` // Insert after another
-- **Environment detection:**
-  - `Asset::$envResolver = fn() => app()->environment();`
-- **Custom URL generator:**
-  - `Asset::$urlGenerator = fn($file, $secure) => asset($file, $secure);`
-
----
-
-## Testing
+The last release keeps working. Pin it so Composer will not surprise you, then remove it when you next touch the layout:
 
 ```bash
-composer test
+composer require rumenx/php-assets:^1.0
 ```
 
-## Static Analysis
-
-```bash
-composer analyze
-```
-
-## Development & Testing
-
-### Running Tests
-
-```bash
-composer test
-```
-
-### Running Static Analysis
-
-```bash
-composer analyze
-```
-
-### CI/CD
-
-- GitHub Actions for tests, static analysis, and Codecov coverage reporting.
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to get started.
-
-## Security
-
-If you discover a security vulnerability, please review our [Security Policy](SECURITY.md) for information on how to report it responsibly.
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes to this project.
-
-## Funding
-
-If you find this project useful, consider [supporting its development](FUNDING.yml).
+After this notice, switch that layout to one of the approaches above and delete the dependency. Issues and pull requests are closed because the repository is archived.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE.md).
+Released under the [MIT License](LICENSE.md).
